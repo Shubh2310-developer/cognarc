@@ -1,0 +1,17 @@
+{
+  "name": "cognarc-monorepo",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "test": "turbo run test"
+  },
+  "devDependencies": {
+    "@railway/cli": "^4.47.1",
+    "turbo": "latest",
+    "vercel": "^53.1.1"
+  },
+  "packageManager": "pnpm@10.33.4"
+}

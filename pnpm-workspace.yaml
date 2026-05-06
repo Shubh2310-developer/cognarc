@@ -1,0 +1,3 @@
+allowBuilds:
+  '@railway/cli': true
+  esbuild: true

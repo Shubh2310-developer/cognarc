@@ -1,0 +1,1630 @@
+⚔  COGNARC
+Gamified AI Skill Engine
+Cognitive Optimization &amp; Gamified Neural Adaptive Reinforcement Console
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Production Documentation  ·  v2.0 — Execution Edition
+SaaS Platform  │  Final Year Project  │  Portfolio Showcase  │  Buildable System
+&quot;Turn your skill gap into a quest. Every day is a level. Every skill is a tree to climb.&quot;
+
+Version
+2.0.0 — Execution Edition
+Document Type
+Architecture + Product + Execution Plan
+Stack
+Next.js · FastAPI · Go · Groq · MongoDB
+Model
+Free Tier SaaS — Zero-Cost Infrastructure
+Build Approach
+MVP in 10 Days → Phased to Agentic AI
+Scope
+Single Developer — Full System
+
+01  EXECUTIVE SUMMARY
+Problem → Solution → Value → Users
+
+1.1  Problem Statement — Why Current Learning Systems Fail
+Modern online learning platforms treat users as passive consumers, not active agents. This creates a fundamental mismatch between how humans learn best and how platforms are designed.
+Failure Mode
+Platform Examples
+Root Cause
+Impact
+Static curriculum
+Coursera, Udemy
+Pre-defined content order ignores readiness
+Users skip ahead or fall behind
+Zero personalization
+YouTube tutorials
+No skill state tracking
+Repeated content, boredom
+No feedback loop
+Most free resources
+No evaluation of comprehension
+Illusion of learning
+Motivation collapse
+MOOCs (94% drop rate)
+No psychological engagement hooks
+Abandonment within 2 weeks
+Manual task selection
+Todo-based plans
+Cognitive load of choosing what to learn
+Decision fatigue, paralysis
+No adaptive difficulty
+Fixed-level courses
+Cannot detect boredom or struggle
+Under/over-challenge
+
+STAT
+Over 94% of MOOC enrollees never complete their courses. The average self-taught developer abandons their learning plan within 18 days. The problem is not content — it is motivation architecture.
+
+1.2  Solution Overview
+Cognarc is a gamified, AI-driven skill development engine that replaces manual learning planning with an intelligent quest system.
+Capability
+What It Does
+AI Quest Generation
+Every morning, an AI pipeline generates 3 personalized micro-quests based on current skill state, history, and behavioral signals.
+Skill Tree Architecture
+Skills modeled as a DAG — you cannot unlock &quot;RAG Systems&quot; before completing &quot;Vector Embeddings&quot;. Dependency-enforced progression.
+Gamification Engine
+XP, levels, streaks, boss battles, and daily multipliers create compulsive engagement loops identical to game design.
+Adaptive Intelligence
+Monitors boredom signals (fast completions), struggle signals (repeated failures), and inconsistency (missed days) to adjust difficulty.
+Offline-First Architecture
+Core quest delivery and progress tracking works without internet. Sync happens in background when connectivity is restored.
+
+1.3  Unique Value Proposition
+UVP
+Cognarc is the only platform where you never have to decide what to learn next. The system generates, evaluates, and adapts your entire learning journey — turning skill development into a game you cannot put down.
+
+1.4  Target Users
+Persona
+Profile
+What They Need
+Primary
+Final-year CS/AI/Data Science students seeking structured daily practice beyond coursework
+Opinionated daily tasks that map directly to placement prep
+Secondary
+Self-taught developers transitioning into AI Engineering, Backend (Python/Go), or Agentic AI roles
+Clear skill progression without a mentor
+Tertiary
+Working professionals who want 30–60 min of daily upskilling without planning overhead
+Zero decision fatigue — just open and start
+&quot;The Scattered Learner&quot;
+12 open browser tabs, 4 unfinished Udemy courses. Needs structure and momentum, not more content.
+Forced prioritization — single daily quest list
+&quot;The Competitive Grinder&quot;
+Responds to leaderboards, streaks, and visible progress. Needs a system that rewards daily effort.
+Visible ranking, streak pressure, XP velocity
+&quot;The Overwhelmed Beginner&quot;
+Does not know where to start in AI/backend. Needs opinionated, sequenced, bite-sized guidance.
+Locked skill trees — no choice paralysis
+
+02  PRODUCT VISION &amp; STRATEGY
+Where we are going and why we will win
+
+2.1  Long-Term Vision
+VISION
+In 3 years, Cognarc becomes the default daily practice environment for AI and backend engineers worldwide — a living system that knows your skill graph better than any mentor, and generates your optimal learning path every single morning.
+
+2.2  Core Differentiators
+Differentiator
+Technical Implementation
+Why Competitors Cannot Copy Easily
+AI-Generated Quests
+Groq API + fine-tuned prompt pipeline with skill context injection
+Requires deep skill graph modeling, not just content recommendations
+Behavioral Adaptation
+XP velocity, failure rate, and session timing signals feed adaptive engine
+Requires instrumented behavioral telemetry from day one
+Skill Dependency Graph
+DAG stored in MongoDB with topological quest ordering
+Complex data modeling most platforms skip in favor of flat content
+Boss Battle System
+Timed, multi-step AI-evaluated challenges with pass/fail gates
+Gamification at this depth requires bespoke game design logic
+Zero-Cost Infrastructure
+All free tiers: Vercel, Railway, MongoDB Atlas, Groq, Supabase
+Competitors monetize infra; we compete on product quality
+Offline Capability
+Service workers + IndexedDB for quest caching, background sync
+Real-time platforms ignore offline — we treat it as core
+
+2.3  Market Positioning
+POSITION
+We are not competing with content platforms. We are competing with the calendar and the todo list — the tools developers currently use to manage their learning. Cognarc occupies the intersection of EdTech ($400B+), Productivity Tools ($50B+), and Gaming ($200B+).
+
+03  SYSTEM ARCHITECTURE
+Components · Data Flow · Offline Strategy
+
+  ✦ UPGRADED — Practical Deployment Version Added  
+3.1  Architecture Strategy: Two Versions
+This document specifies two architectures: the MVP Monolith you build first, and the Microservices Target you grow into. This is not a compromise — it is correct engineering. Start simple, validate, then scale.
+
+
+MVP Architecture (Days 1–10)
+Target Architecture (Phase 3+)
+Pattern
+Single FastAPI app + Next.js frontend
+Event-driven microservices with AI orchestration layer
+Backend
+One FastAPI process — all routes in one app
+Separate Quest, Progress, User, Gamification services
+Gateway
+None — FastAPI handles all routing directly
+Go/Gin API Gateway with JWT auth and rate limiting
+AI
+Single prompt pipeline, synchronous, no agents
+LangGraph multi-agent: Planner, Generator, Evaluator, Adaptation
+Database
+MongoDB Atlas only
+MongoDB Atlas + Supabase + Upstash Redis
+Deployment
+One Railway service + Vercel
+5+ Railway services, each containerised separately
+Offline
+Basic IndexedDB quest cache
+Full offline sync with Phi-2 local fallback
+
+PRACTICAL RULE
+Never build the microservices version first. The MVP monolith proves the product works. The microservices version proves it can scale. Sequence matters — build in this order, no exceptions.
+
+3.2  Full Target Architecture Diagram
+┌─────────────────────────────────────────────────────────────────┐
+│                     CLIENT LAYER                                │
+│   Next.js 14 (React) · Tailwind · ShadCN · Service Workers     │
+│   PWA Shell + IndexedDB Cache + Offline Quest Storage           │
+└───────────────────────┬─────────────────────────────────────────┘
+                        │ HTTPS / WebSocket
+┌───────────────────────▼─────────────────────────────────────────┐
+│                    API GATEWAY LAYER                            │
+│   Go/Gin Router · Rate Limiter · Auth Middleware (JWT)          │
+│   /api/v1/* → routes to appropriate microservice               │
+└────┬──────────────┬──────────────────┬──────────────┬──────────┘
+     │              │                  │              │
+┌────▼────┐  ┌──────▼──────┐  ┌───────▼────┐  ┌─────▼──────┐
+│  Quest  │  │  Progress   │  │   User     │  │Gamification│
+│ Service │  │  Service    │  │  Service   │  │  Engine    │
+│FastAPI  │  │  FastAPI    │  │  Go/Fiber  │  │  FastAPI   │
+└────┬────┘  └──────┬──────┘  └───────┬────┘  └─────┬──────┘
+     │              │                  │              │
+┌────▼──────────────▼──────────────────▼──────────────▼──────────┐
+│                      AI ORCHESTRATION LAYER                     │
+│   Quest Generator Agent · Evaluator Agent · Adaptation Agent   │
+│   Groq API (cloud) · Phi-2 / BGE-small (local fallback)        │
+└───────────────────────────┬─────────────────────────────────────┘
+                            │
+┌───────────────────────────▼─────────────────────────────────────┐
+│                      PERSISTENCE LAYER                          │
+│   MongoDB Atlas (documents) · Supabase (relational + auth)      │
+│   Redis (quest cache) · Supabase Storage (avatars, assets)      │
+└─────────────────────────────────────────────────────────────────┘
+
+3.3  MVP Architecture Diagram (Build This First)
+┌──────────────────────────────────────────────────┐
+│             CLIENT LAYER (Next.js 14)            │
+│   React · Zustand · React Query · Dexie.js       │
+└───────────────────────┬──────────────────────────┘
+                        │ HTTPS
+┌───────────────────────▼──────────────────────────┐
+│         SINGLE FastAPI APP  (port 8000)          │
+│                                                  │
+│   /auth/*       → JWT validation (Supabase)      │
+│   /quests/*     → Quest generation + CRUD        │
+│   /progress/*   → XP + completion logging        │
+│   /gamification → Level + streak calculation     │
+│   /ai/*         → Groq API adapter               │
+└────────┬────────────────────┬─────────────────── ┘
+         │                    │
+┌────────▼──────┐    ┌────────▼──────┐
+│ MongoDB Atlas │    │ Groq API      │
+│ (primary DB)  │    │ (LLM inference│
+└───────────────┘    └───────────────┘
+
+3.4  Component Breakdown
+Frontend — Next.js 14 + Tailwind + ShadCN
+Layer
+Technology
+Responsibility
+App Router
+Next.js 14 (App Dir)
+Server components for dashboard, quest pages, skill trees
+State Management
+Zustand + React Query
+Global XP/level state; server-state sync for quests
+Offline Cache
+IndexedDB via Dexie.js
+Store today&apos;s quests, user progress, XP locally
+Service Worker
+next-pwa (Workbox)
+Background sync, push notifications, offline fallback
+UI Components
+ShadCN + Radix UI
+Accessible base components (dialogs, dropdowns, cards)
+Animations
+Framer Motion
+XP bar fills, level-up bursts, quest card transitions
+Charts
+Recharts
+Skill tree visualization, XP history graph
+
+Backend — FastAPI (Python) + Go Microservices (Phase 2+)
+Service
+Language/Framework
+Port
+Core Responsibilities
+API Gateway
+Go + Gin
+8000
+Request routing, JWT auth, rate limiting, CORS
+Quest Service
+Python + FastAPI
+8001
+Quest generation, AI prompt dispatch, quest CRUD
+Progress Service
+Python + FastAPI
+8002
+Task completion, XP calculation, log storage
+User Service
+Go + Fiber
+8003
+Registration, profile, skill tree state, settings
+Gamification Engine
+Python + FastAPI
+8004
+Level-up logic, streak management, boss battle evaluation
+AI Adapter
+Python
+8005
+Unified interface to Groq API and local Phi-2 model
+
+MVP NOTE
+In MVP (Days 1–10), ALL of the above services are combined into one FastAPI application. Do NOT split into microservices until Phase 2. One process, one port, one deployment unit.
+
+3.5  Data Flow — Quest Generation Lifecycle (Sequence)
+USER (7:00 AM opens app)
+  │
+  ▼
+PWA checks IndexedDB for today&apos;s quests
+  ├─ FOUND → render cached quests immediately (offline mode)
+  └─ NOT FOUND → HTTP GET /api/v1/quests/generate
+                   │
+                   ▼
+              JWT Validation (Supabase Auth)
+                   │  valid
+                   ▼
+              Quest Service builds context payload:
+                   ├─ MongoDB: user.skill_state, level, xp
+                   ├─ MongoDB: last 7 days quest_log
+                   ├─ Redis: streak_count, last_login_date
+                   └─ Gamification Engine: difficulty_modifier
+                   │
+                   ▼  (context built, ~50ms)
+              AI Adapter → Groq API
+                   ├─ System prompt: role + output schema
+                   ├─ User prompt: skill context + behavioral signals
+                   └─ Response: JSON with 3 quest objects (~800ms)
+                   │
+                   ▼
+              Deduplication (BGE-small embeddings)
+                   ├─ cosine_similarity &gt; 0.85 → regenerate quest
+                   └─ all unique → proceed
+                   │
+                   ▼
+              Store in MongoDB + push to Redis cache (TTL: 24h)
+                   │
+                   ▼
+HTTP 200 response → IndexedDB cache update → UI render
+
+Total latency target: &lt; 1200ms (cold) / &lt; 80ms (cached)
+
+Constraint
+Value
+Mitigation
+Groq API latency (p50)
+~700–900ms
+Redis cache means only 1 call/user/day; 99% of requests hit cache
+Groq free rate limit
+30 req/min, 14,400/day
+BGE dedup reduces regeneration calls. Phi-2 fallback on exhaustion.
+MongoDB Atlas free tier
+512 MB storage
+TTL indexes on embeddings (30d), progress logs archived after 90d
+Redis free tier
+10,000 req/day
+Streak + cache only. 3 operations/user/day = 3,333 active users covered
+Railway free credit
+$5/month
+MVP monolith uses 1 service. 0.5 vCPU + 512MB fits comfortably.
+
+3.6  Offline vs Online Strategy
+Feature
+Online Behavior
+Offline Behavior
+Sync Strategy
+Quest Display
+Fetch from API
+Serve from IndexedDB
+Pre-fetch previous evening
+Task Completion
+POST to Progress Service
+Queue in IndexedDB pending_sync
+Background sync on reconnect
+XP Update
+Real-time API call
+Local state update only
+Reconcile with server on sync
+Streak Check
+Server-side calculation
+Last known streak from cache
+Server authoritative on sync
+New Quest Generation
+Groq API call
+Phi-2 local — lower quality, clearly labeled &quot;Offline Quest&quot;
+No sync needed (local generated)
+Leaderboard
+Live Supabase query
+Show stale cached data with notice
+Refresh on reconnect
+
+OFFLINE REALISM
+Offline AI quest generation via Phi-2 produces noticeably lower quality output than Groq. This is acknowledged, not hidden. The UI labels these quests as &quot;Offline Quest (Basic Mode)&quot;. Core value — quest delivery and progress tracking — works fully offline. Advanced generation quality is an online-only feature.
+
+04  FEATURE BREAKDOWN
+Core Systems + Advanced Capabilities
+
+4.1  Core Features
+AI Quest Generator
+Quest Property
+Description
+Example
+Quest Type
+Theory, Coding, Debug, Research, or Build
+&quot;Coding&quot; — implement a binary search
+Difficulty
+Easy / Medium / Hard / Boss
+Medium for level 12 user on streak day 4
+XP Reward
+Calculated by type × difficulty × streak multiplier
+150 XP for Medium Coding on 5-day streak
+Time Estimate
+AI-estimated minutes to complete
+25 minutes
+Skill Node
+Which skill tree node this quest unlocks/advances
+DSA → Searching → Binary Search
+Evaluation Criteria
+How completion is verified (see Section 6.3 for hybrid model)
+Submit code passing 3/3 test cases
+
+Skill Tree System
+Skills are modeled as a Directed Acyclic Graph (DAG). Each node represents a specific skill unit. Edges represent prerequisites. A user cannot attempt a child node until the parent reaches the required completion threshold.
+Skill Tree
+Node Progression
+DSA
+Arrays → Linked Lists → Stacks/Queues → Trees → Graphs → DP → Advanced Graphs
+AI Engineering
+Python Basics → NumPy/Pandas → ML Fundamentals → LLMs → RAG → Agentic AI → Multi-Agent Systems
+Backend
+HTTP Basics → REST APIs → FastAPI → Databases → Auth → Go Fundamentals → Microservices → gRPC
+Agentic AI
+LangChain Basics → Chains → Memory → Agents → Tools → LangGraph → Multi-Agent Orchestration
+
+Streak Engine
+Mechanic
+Specification
+Streak Core
+Maintained by completing at least 1 quest per calendar day (00:00–23:59 user local time).
+Streak Shield
+1 Shield earned per 7-day streak. Auto-activates on first missed day. Max 2 shields stacked.
+Streak Multiplier
+Days 1–6: 1.0x  |  Days 7–13: 1.25x  |  Days 14–29: 1.5x  |  Days 30+: 2.0x
+Streak Freeze Warning
+Push notification at 8:00 PM if no quest completed. Second warning at 10:30 PM.
+
+Boss Battles
+Boss Battles are weekly high-stakes challenges requiring mastery across multiple skill nodes from that week. Timed at 60 minutes, multi-part, evaluated by hybrid test+AI system.
+Part
+Format
+Evaluation
+Part 1 — Theory
+5 conceptual questions on that week&apos;s nodes
+AI rubric scoring (accuracy, depth, completeness)
+Part 2 — Implementation
+1 coding problem requiring synthesis of the week&apos;s skills
+Test cases (primary) + AI code quality review (secondary)
+Part 3 — Debug
+1 broken code snippet to diagnose and fix
+Test cases verify fix; AI explains root cause
+Reward
+500–1500 XP + unique achievement badge + skill node mastery stamp
+Auto-awarded on pass
+Failure
+No XP loss. Streak maintained. Boss unlocks again after 3 days.
+AI provides failure analysis with targeted remediation path
+
+Anti-Boredom Engine
+Signal
+Detection Method
+Engine Response
+Boredom
+Completion time &lt; 50% of estimate for 2+ consecutive quests
+Increase next quest difficulty; introduce surprise quest type
+Frustration
+Fail rate &gt; 60% across 5 quests
+Reduce difficulty; inject theory quest to rebuild foundation
+Inconsistency
+2+ missed days in a 7-day window
+Switch to Comeback Mode: 1 easy quest per day for 3 days
+Plateau
+Same skill node for 5+ days with 100% completion
+Force advancement to next node with bridge quest
+
+05  GAMIFICATION SYSTEM DESIGN
+XP · Levels · Streaks · Psychology
+
+5.1  XP Calculation Logic
+XP_earned = base_xp
+            × difficulty_multiplier
+            × streak_multiplier
+            × time_bonus_multiplier
+            × quest_type_multiplier
+
+# Base XP by difficulty:
+base_xp = { easy: 50, medium: 100, hard: 200, boss: 500 }
+
+# Difficulty multiplier (from adaptive engine):
+difficulty_multiplier = difficulty_modifier  # 0.5 – 2.0
+
+# Streak multiplier:
+streak_multiplier = { days 1-6: 1.00, days 7-13: 1.25, days 14-29: 1.50, days 30+: 2.00 }
+
+# Time bonus (complete under 80% of estimated time):
+time_bonus_multiplier = 1.2 if actual_time &lt; 0.8 * estimated_time else 1.0
+
+# Quest type multiplier:
+quest_type_multiplier = { theory: 0.8, coding: 1.0, debug: 1.1, build: 1.3 }
+
+5.2  Level Progression Formula
+# XP required to reach level N:
+xp_for_level(N) = 100 × (N ^ 1.8)
+
+# Current level calculation:
+current_level = floor( (total_xp / 100) ^ (1/1.8) )
+
+# Progress to next level (for XP bar):
+progress_pct = (total_xp - xp_for_level(N)) / (xp_for_level(N+1) - xp_for_level(N))
+
+Level Range
+Title
+Approx. Days to Reach
+Unlocks
+1–5
+Apprentice
+1–7 days
+Basic quest types, profile customization
+6–15
+Practitioner
+8–30 days
+Daily bonus quests, streak shields
+16–30
+Engineer
+31–90 days
+Boss battles, skill tree branching
+31–50
+Architect
+91–180 days
+Guild creation, leaderboard entry
+51–75
+Grandmaster
+181–365 days
+Beta features, community quest creation
+76–100
+Legend
+366+ days
+AI tutor access, mentor matching (future)
+
+5.3  Behavioral Psychology Foundation
+Psychological Principle
+Implementation in Cognarc
+Research Basis
+Variable Reward Schedule
+Boss battles, random bonus XP events, surprise quests
+Skinner&apos;s operant conditioning — most addictive reward pattern
+Loss Aversion
+Streak Shield creates fear of losing streak without punishing failure
+Kahneman &amp; Tversky: losses feel 2× stronger than equivalent gains
+Progress Principle
+XP bar always moves forward; even tiny completions show visible progress
+Amabile &amp; Kramer: sense of forward progress is #1 daily motivator
+Social Comparison
+Leaderboard, peer streak display, guild XP totals
+Festinger&apos;s Social Comparison Theory
+Autonomy + Structure
+User picks skill domain; AI picks daily tasks within it
+Self-Determination Theory: autonomy + competence + relatedness
+Zeigarnik Effect
+Incomplete boss battles displayed prominently in UI
+Unfinished tasks occupy working memory until completed
+
+06  AI SYSTEM DESIGN
+MVP Pipeline → Hybrid Evaluation → Agentic Architecture
+
+  ✦ UPGRADED — MVP AI Clarified · Hybrid Evaluation Added · Agentic Clearly Phased  
+6.1  AI Architecture by Phase
+Phase
+AI Approach
+Complexity
+When to Build
+MVP (Days 1–10)
+Single prompt pipeline — one synchronous call to Groq API, no agents, deterministic logic
+Low — one function, one prompt template
+Build this first. Validate it works. Ship it.
+Phase 2
+Add BGE-small deduplication + Phi-2 fallback. Still single pipeline.
+Low-Medium — adds embedding comparison
+After MVP ships and users are active
+Phase 3
+Evaluator with hybrid test+AI model. More sophisticated prompt logic.
+Medium — sandboxed code execution added
+After code submission flow is proven
+Phase 4
+LangGraph multi-agent: Planner, TaskGenerator, Evaluator, Adaptation agents
+High — agent state machine, async coordination
+ONLY after Phase 1–3 are stable in production
+
+CRITICAL WARNING
+Do NOT implement the multi-agent system in Phase 1. Agents, LangGraph, and the Planner/Adaptation architecture are Phase 4 features. Building them before validating the core product is the single most common reason AI projects never ship. MVP AI is intentionally simple.
+
+6.2  MVP AI — Single Prompt Pipeline
+Inputs to the AI Pipeline
+Input Field
+Source
+Type
+Example
+user_level
+MongoDB users.level
+int
+14
+current_skill_focus
+users.active_skill_tree
+str
+&quot;AI Engineering&quot;
+skill_node_current
+users.skill_state.current_node
+str
+&quot;RAG Systems&quot;
+streak_count
+Redis streak:{user_id}
+int
+8
+difficulty_modifier
+Gamification Engine
+float
+1.15
+recent_quest_types
+Last 7 progress logs
+list[str]
+[&quot;coding&quot;,&quot;theory&quot;,&quot;coding&quot;]
+completion_rate_7d
+Progress Service
+float
+0.714
+
+Prompt Structure (MVP)
+SYSTEM PROMPT:
+You are Cognarc, an expert skill development engine for developers.
+Generate exactly 3 learning quests as valid JSON matching the provided schema.
+Rules:
+  - Vary quest types across the 3 quests (do not repeat same type)
+  - Match difficulty to user level and difficulty_modifier
+  - Quests must be completable in estimated_minutes on a laptop
+  - Do not generate quests similar to recent_quest_summaries
+  - Every quest must map to exactly one skill_node
+Output ONLY the JSON object. No explanation, no markdown.
+
+USER PROMPT:
+USER CONTEXT:
+  - Level: {user_level} | Skill: {skill_node_current} ({node_progress*100}% complete)
+  - Streak: {streak_count} days | Difficulty modifier: {difficulty_modifier}
+  - 7-day completion rate: {completion_rate_7d*100}%
+  - Recent quest types: {recent_quest_types}
+  - Recent quest summaries (avoid repeating): {recent_quest_summaries}
+Generate today&apos;s 3 quests.
+
+6.3  Hybrid Code Evaluation Model
+  ★ NEW SECTION  
+Pure AI evaluation of code submissions is unreliable, inconsistent, and gameable. Cognarc uses a hybrid model: test cases provide ground-truth correctness; AI provides contextual feedback. This is the only responsible approach.
+Layer
+Method
+What It Validates
+Weight in Decision
+Primary
+Test cases via sandboxed subprocess
+Correctness — does the code produce the right output?
+Pass/fail gate — must pass to earn full XP
+Secondary
+AI feedback (Groq/Mixtral)
+Code quality — readability, efficiency, edge cases handled
+Advisory only — does not block XP award
+Fallback
+Self-report + honor system
+User confirms completion for theory/research quest types
+Used when no objective test is possible
+
+Why AI-Only Evaluation Is Unreliable
+Problem
+Consequence
+LLMs hallucinate correctness for incorrect code
+Users get XP for wrong submissions — completely undermines the skill system
+AI feedback is inconsistent across calls
+Same code gets different scores — users lose trust in the system
+AI cannot distinguish runtime errors from logic errors
+Incorrect code may appear &quot;reasonable&quot; to the model in context
+Prompt injection via code submissions is a real attack vector
+Malicious users could manipulate evaluator behavior
+
+Sandboxing Implementation
+# Evaluation pipeline — Python subprocess with resource limits
+import subprocess, json, resource
+
+def run_sandboxed(code: str, test_cases: list, timeout: int = 10)-&gt; dict:
+    results = []
+    for tc in test_cases:
+        try:
+            proc = subprocess.run(
+                [&quot;python3&quot;, &quot;-c&quot;, f&quot;{code}\nprint({tc[&apos;call&apos;]})&quot;],
+                capture_output=True, text=True,
+                timeout=timeout,          # hard timeout: 10 seconds
+                # No network, no file system write (container-level)
+            )
+            passed = proc.stdout.strip() == str(tc[&quot;expected&quot;])
+            results.append({&quot;passed&quot;: passed, &quot;output&quot;: proc.stdout.strip()})
+        except subprocess.TimeoutExpired:
+            results.append({&quot;passed&quot;: False, &quot;output&quot;: &quot;TIMEOUT&quot;})
+    pass_rate = sum(r[&quot;passed&quot;] for r in results) / len(results)
+    return {&quot;pass_rate&quot;: pass_rate, &quot;results&quot;: results, &quot;passed&quot;: pass_rate &gt;= threshold}
+
+6.4  Agentic AI Architecture (Phase 4 ONLY)
+PHASE GATE
+The following multi-agent architecture is Phase 4 (Days 46–70). Do not read this section during MVP development. It is documented here for completeness and future reference — not as a build requirement for initial launch.
+
+Agent
+Role
+LLM
+Trigger
+Output
+Planner
+Maintains 7-day forward-looking quest schedule anchored to skill tree topology
+Mixtral-8x7B
+Sunday night + after boss battle
+7-day plan stored in users.agent_state
+Task Generator
+Converts Planner&apos;s daily plan into specific quest content
+Llama-3-70B
+Daily 05:00 AM user local time
+3 quest objects in production schema
+Evaluator
+Reviews user-submitted work — hybrid test+AI model
+Mixtral-8x7B
+On submission
+score, passed, xp_award, feedback, hints
+Adaptation
+Async behavioral analysis and difficulty adjustment — algorithmic (no LLM)
+None — pure Python
+10 min after session end
+Updated difficulty_modifier + behavioral_profile
+
+07  DATABASE SCHEMA
+MongoDB Collections + Supabase Tables
+
+7.1  MongoDB Collections
+Collection: users
+{
+  &quot;_id&quot;: ObjectId,
+  &quot;auth_id&quot;: &quot;supabase_user_uuid&quot;,       // FK to Supabase auth.users
+  &quot;username&quot;: &quot;shubh_dev&quot;,
+  &quot;email&quot;: &quot;user@example.com&quot;,
+  &quot;created_at&quot;: ISODate,
+  &quot;level&quot;: 14,
+  &quot;total_xp&quot;: 45231,                     // Cumulative XP (never decreases)
+  &quot;active_skill_tree&quot;: &quot;AI Engineering&quot;,
+  &quot;skill_state&quot;: {
+    &quot;AI Engineering&quot;: {
+      &quot;current_node&quot;: &quot;RAG Systems&quot;,
+      &quot;node_progress&quot;: 0.45,
+      &quot;mastered_nodes&quot;: [&quot;Python Basics&quot;, &quot;ML Fundamentals&quot;],
+      &quot;unlocked_nodes&quot;: [&quot;LLMs&quot;, &quot;RAG Systems&quot;],
+      &quot;locked_nodes&quot;: [&quot;Agentic AI&quot;, &quot;Multi-Agent Systems&quot;]
+    }
+  },
+  &quot;behavioral_profile&quot;: {
+    &quot;difficulty_modifier&quot;: 1.15,
+    &quot;preferred_quest_types&quot;: [&quot;coding&quot;, &quot;debug&quot;],
+    &quot;completion_rate_7d&quot;: 0.714,
+    &quot;mode&quot;: &quot;normal&quot;    // normal | comeback | boredom | frustration
+  },
+  &quot;settings&quot;: { &quot;timezone&quot;: &quot;Asia/Kolkata&quot;, &quot;theme&quot;: &quot;dark&quot; }
+}
+
+Collection: quests
+{
+  &quot;_id&quot;: ObjectId,
+  &quot;quest_id&quot;: &quot;q_abc123&quot;,
+  &quot;user_id&quot;: ObjectId,
+  &quot;date&quot;: ISODate,
+  &quot;title&quot;: &quot;Implement a Basic RAG Pipeline&quot;,
+  &quot;type&quot;: &quot;coding&quot;,           // theory|coding|debug|research|build
+  &quot;difficulty&quot;: &quot;medium&quot;,
+  &quot;estimated_minutes&quot;: 35,
+  &quot;xp_reward&quot;: 127,
+  &quot;skill_node&quot;: &quot;RAG Systems&quot;,
+  &quot;skill_tree&quot;: &quot;AI Engineering&quot;,
+  &quot;evaluation_criteria&quot;: {
+    &quot;type&quot;: &quot;code_submission&quot;,
+    &quot;test_cases&quot;: 3,
+    &quot;pass_threshold&quot;: 0.67
+  },
+  &quot;hints&quot;: [&quot;Use RecursiveCharacterTextSplitter&quot;],
+  &quot;embedding&quot;: [0.023, -0.412, ...],  // BGE-small 384-dim for dedup
+  &quot;status&quot;: &quot;pending&quot;,                // pending|completed|skipped|failed
+  &quot;generated_by&quot;: &quot;groq&quot;,             // groq|phi2|cached
+  &quot;created_at&quot;: ISODate
+}
+
+7.2  Supabase (PostgreSQL) Tables
+Table
+Key Columns
+Purpose
+auth.users
+id (uuid), email, created_at
+Managed by Supabase Auth — do not modify
+public.leaderboard
+user_id, username, total_xp, current_level, streak, updated_at
+Materialized view updated every 15 min for fast leaderboard queries
+public.achievements
+id, user_id, badge_id, badge_name, earned_at, xp_bonus
+Immutable record of earned badges
+public.boss_battles
+id, user_id, week_of, status, score, time_taken_min, xp_awarded
+Boss battle attempts and results
+public.guild_members
+guild_id, user_id, role, joined_at, contribution_xp
+Future: guild/team feature
+
+08  API DESIGN
+Production-Level Endpoints · Payloads · Constraints
+
+Base URL: https://api.cognarc.ai/v1  |  Auth: Authorization: Bearer &lt;jwt_token&gt;  |  Format: application/json
+
+8.1  API Flow Overview
+User Action → Next.js Frontend
+    │  HTTP Request + JWT
+    ▼
+FastAPI Backend (MVP: single app | Phase 2+: via Go Gateway)
+    ├─ JWT decode via Supabase Auth SDK (~5ms)
+    ├─ Rate limit check via Redis (~3ms)
+    ├─ Route to handler
+    │    ├─ DB read: MongoDB (~20–50ms)
+    │    ├─ AI call: Groq API (~700–900ms) — only on generation
+    │    └─ DB write: MongoDB (~15–30ms)
+    └─ Return JSON response
+    │
+    ▼
+Frontend: update Zustand state + React Query cache + IndexedDB
+
+Endpoint
+Method
+Auth
+Rate Limit
+Description
+POST /quests/generate
+POST
+JWT
+5/day/user
+Trigger AI quest generation for today. Idempotent — returns cached quests if already generated.
+POST /quests/{id}/evaluate
+POST
+JWT
+10/day/user
+Submit completed quest for hybrid evaluation. Returns score, feedback, XP award.
+POST /progress/update
+POST
+JWT
+100/day/user
+Manual progress update (started, hint used, skipped, completed). Used for real-time UI state.
+GET /dashboard
+GET
+JWT
+60s cache
+Returns complete dashboard state: user stats, today&apos;s quests, streak, leaderboard position.
+GET /skill-tree
+GET
+JWT
+5 min cache
+Returns user&apos;s full skill tree state with node completion percentages.
+GET /leaderboard
+GET
+JWT
+15 min cache
+Top 100 users by XP. Supabase materialized view.
+
+09  TECH STACK — FREE ONLY
+Every tool on the free tier
+
+Category
+Tool
+Version
+Free Tier Limits
+Role
+Frontend
+Next.js
+14.x
+Unlimited on Vercel
+Full-stack React framework; SSR for dashboard, CSR for quest interaction
+Frontend
+Tailwind CSS
+3.x
+Open source
+Utility-first styling; dark mode via CSS variables
+Frontend
+ShadCN/UI
+Latest
+Open source
+Pre-built accessible components (dialogs, cards, badges, progress bars)
+Frontend
+Framer Motion
+11.x
+Open source (MIT)
+XP bar animation, level-up ceremony, quest card transitions
+Frontend
+Zustand
+4.x
+Open source
+Global XP/level/streak state management
+Frontend
+Dexie.js
+3.x
+Open source
+IndexedDB wrapper for offline quest storage
+Backend
+FastAPI
+0.115.x
+Open source
+Quest, Progress, Gamification — single monolith in MVP
+Backend
+Go + Gin
+1.21/1.9.x
+Open source
+API Gateway — Phase 2+ only
+AI
+Groq API
+Latest
+30 req/min, 14,400/day
+Primary LLM inference — Mixtral-8x7B and Llama-3-70B
+AI
+Phi-2 (llama.cpp)
+2.7B Q4_K_M
+Open source
+Local offline fallback LLM; CPU-only; Phase 2+
+AI
+BGE-small-en-v1.5
+384-dim
+Apache 2.0
+Quest deduplication embeddings; Phase 2+
+AI
+LangGraph
+0.2.x
+Open source
+Multi-agent coordination — Phase 4 ONLY
+Database
+MongoDB Atlas
+M0 cluster
+512MB, shared
+Primary document store (users, quests, progress, streaks)
+Database
+Supabase
+Free plan
+500MB DB, 2GB bandwidth
+Auth (magic link + OAuth), leaderboard, achievements
+Database
+Upstash Redis
+Free plan
+10,000 req/day
+Quest cache TTL, streak counters, rate limiter
+Hosting
+Vercel
+Hobby plan
+100GB bandwidth
+Next.js frontend deployment; automatic preview deploys on PR
+Hosting
+Railway
+Starter plan
+$5 credit/month
+FastAPI monolith + Go services; Docker-based deployment
+DevOps
+GitHub Actions
+Free plan
+2,000 min/month
+CI/CD pipeline: test → lint → build → deploy
+Monitoring
+Sentry
+Free plan
+5,000 errors/month
+Error tracking for all services
+
+10  EXECUTION STRATEGY &amp; SCOPE CONTROL
+★ NEW SECTION — Build-First Phasing · What to Delay · What to Mock
+
+  ★ NEW SECTION  
+CORE PRINCIPLE
+Complexity is not quality. A working MVP with basic AI quest generation is more valuable than a beautifully documented multi-agent system that never runs. This section defines what gets built, what gets deferred, and what gets mocked. Violating this order is the primary cause of project failure.
+
+10.1  MVP Scope — What Is Built in 10 Days
+Feature
+MVP Implementation
+What Is Intentionally Simplified
+Backend Architecture
+Single FastAPI app on one Railway service
+No microservices, no Go gateway, no service mesh
+AI Quest Generation
+One synchronous Groq API call with a single prompt template
+No agents, no planner, no LangGraph, no Phi-2 fallback
+Code Evaluation
+Self-report only (user marks complete) + basic test case check for simple problems
+No AI feedback in MVP — add in Phase 2 evaluator
+XP System
+Full XP formula implemented in Python function
+Level-up ceremony is a simple toast — no Framer Motion animation
+Streak Engine
+Redis-based streak counter with basic increment/reset logic
+Streak shields deferred to Phase 2
+Offline Mode
+IndexedDB quest cache via Dexie.js — quests pre-fetched on load
+No Phi-2 fallback, no background sync in MVP
+Auth
+Supabase magic link auth — email only
+No OAuth providers in MVP
+Frontend
+Next.js dashboard showing 3 quests + XP + streak. No animations.
+No skill tree visualization, no boss battles, no leaderboard
+Skill Tree
+Skill tree data seeded in MongoDB. Current node shown on dashboard.
+No interactive DAG visualization — just text display
+Gamification
+XP + level counter only
+No badges, no boss battles, no leaderboard, no animations
+
+10.2  Post-MVP Phases — What Gets Added When
+Phase
+Days
+Key Additions
+What Remains Deferred
+MVP
+1–10
+Single FastAPI app, Groq prompt pipeline, XP+streak system, basic frontend, MongoDB
+Everything else
+Phase 2
+11–25
+Go API Gateway, BGE-small dedup, Hybrid evaluator with test cases, Phi-2 fallback, PWA offline, push notifications, full skill tree page
+Boss battles, leaderboard, badges, animations
+Phase 3
+26–45
+Boss battles, achievement badges, Supabase leaderboard, Framer Motion UI polish, streak shields, 90-day activity heatmap
+Agentic AI, guild system, mobile app
+Phase 4
+46–70
+LangGraph multi-agent system (Planner, TaskGenerator, Evaluator, Adaptation), Personalization Engine, A/B testing framework
+Mobile app, fine-tuning, certification tracks
+
+10.3  Features Intentionally Mocked in MVP
+Feature
+Mock Strategy
+When to Replace With Real Implementation
+Code Evaluation
+User self-reports completion. Honor system.
+Phase 2 — add sandboxed subprocess test runner
+Skill Tree Visualization
+Plain text list of nodes with completion status
+Phase 3 — Recharts DAG visualization
+Offline AI Generation
+Falls back to cached quests from yesterday. No Phi-2.
+Phase 2 — containerize Phi-2 with llama.cpp
+Push Notifications
+No notifications in MVP
+Phase 2 — Supabase Edge Functions + Web Push API
+Leaderboard
+Not implemented
+Phase 3 — Supabase materialized view
+Level-Up Animation
+Simple toast notification
+Phase 3 — Framer Motion full-screen ceremony
+
+11  EXECUTION VALIDATION PLAN
+★ NEW SECTION — Day-by-Day Checkpoints · Definition of Done
+
+  ★ NEW SECTION  
+BUILD RULE
+&quot;If a feature does not work in isolation, it is not part of MVP.&quot; Every checkpoint below must pass before moving to the next day. If a checkpoint fails, debug and fix it — do not move forward and plan to fix it later.
+
+11.1  10-Day MVP Validation Checkpoints
+Day
+What Was Built
+Validation Checkpoint — Must Pass to Proceed
+Day 1
+Project scaffold: Next.js + FastAPI + Docker Compose
+All services start locally. Health check endpoints return 200 OK.
+Day 2
+Supabase Auth + JWT middleware in FastAPI
+User can register via magic link, receive JWT, and a protected endpoint returns 401 without token, 200 with valid token.
+Day 3
+MongoDB Atlas setup + CRUD operations
+User can log in + see their profile page. User data persists to MongoDB. UI shows email and username correctly.
+Day 4
+Groq API integration + AI Adapter
+Calling /ai/generate with a hardcoded user context returns 3 valid quest objects as JSON. No hallucinated structure.
+Day 5
+Quest Service + /quests/generate endpoint
+Full quest generation pipeline end-to-end. Real user context from MongoDB feeds into AI call. Quests stored to MongoDB.
+Day 6
+Progress Service + quest completion
+User can mark a quest as complete. progress_log entry created. XP calculated and stored in users.total_xp.
+Day 7
+Next.js frontend dashboard
+User can log in, see 3 quests on dashboard, and mark one as done. XP counter updates on the page. No backend errors in console.
+Day 8
+XP &amp; Level logic + Gamification Engine
+XP bar displays correct value. Level updates when XP threshold crossed. Formula verified against manual calculation.
+Day 9
+Streak Engine
+Completing a quest increments streak counter. Missing a day resets streak to 0. Streak count visible on dashboard.
+Day 10
+Deployment + end-to-end test
+Full loop working on production URL: register → receive quests → complete quest → XP updates → streak increments. No critical errors.
+
+11.2  Key Acceptance Criteria (Non-Negotiable)
+Milestone
+Acceptance Criteria
+Day 3 Gate
+User can register, log in, and see their profile page with data from MongoDB. If this does not work, Days 4–10 are blocked.
+Day 7 Gate
+Full quest display and completion flow works in the browser — no backend calls needed beyond what is already built. UI is usable even if ugly.
+Day 10 Gate
+End-to-end loop functions on a public URL. A new user can complete the full loop in under 5 minutes: register → quests → complete → XP updated.
+MVP Rule
+&quot;If the feature does not work in isolation, it is not part of MVP.&quot; No partial implementations that rely on future code to become functional.
+
+12  FAILURE POINTS &amp; RECOVERY STRATEGY
+★ NEW SECTION — Honest Risk Assessment · Where Users Quit · How to Recover
+
+  ★ NEW SECTION  
+12.1  Where the Developer Will Struggle
+Failure Point
+Probability
+Warning Signs
+Recovery Strategy
+Groq API JSON output is malformed or incomplete
+HIGH
+Response missing required fields; output parser throws
+Strict output parsing with Pydantic. On parse failure, retry once then fall back to cached quests.
+Scope creep — starting Phase 2 features during MVP
+HIGH
+Adding agent logic before Day 10 checkpoint passes
+Hard rule: Phase 2 code is in a separate git branch. Merge only after MVP gate passes.
+MongoDB Atlas connection drops under Railway deployment
+MEDIUM
+Intermittent 500 errors in production only
+Add connection retry logic with exponential backoff. Use connection pooling (motor library in Python).
+Supabase JWT validation inconsistencies
+MEDIUM
+Valid users get 401 after token expiry edge cases
+Implement proper JWT refresh logic on the frontend. React Query handles token refresh before each request.
+Railway free credit exhaustion mid-development
+MEDIUM
+Services stop responding; dashboard shows credit warning
+Monitor weekly. Render.com as backup for FastAPI. Fly.io as backup for Go services.
+Sandboxed code execution hangs on infinite loop submissions
+HIGH
+Evaluation endpoint never returns; server memory climbs
+subprocess.run() with timeout=10 is mandatory. Never use exec() or eval(). Test with malicious input before launch.
+Phi-2 local model requires more RAM than available
+MEDIUM
+llama.cpp process killed by OOM
+Use Q4_K_M quantized version (2GB RAM). If Railway RAM is insufficient, disable offline AI — serve cached quests only.
+
+12.2  Where Users Will Quit
+Drop-Off Point
+Probability
+Root Cause
+System Response
+Day 1 — Onboarding is confusing
+HIGH
+User does not understand what a &quot;quest&quot; is or how XP works
+Onboarding tour (3 screens max): what Cognarc is, how quests work, what XP means. Cannot be skipped.
+Days 3–7 — Novelty wears off
+HIGH
+Quest content feels repetitive; no visible skill progress
+Streak shields protect the streak. Comeback Mode activates after first miss. Visual skill tree shows actual node progression.
+First missed day — emotional reset
+HIGH
+Losing a streak feels like starting over
+Streak Shield auto-activates. Comeback Mode: 1 easy quest/day for 3 days with 1.5x XP bonus. No punitive language in UI.
+Quest difficulty mismatch
+MEDIUM
+Quest is too easy (boredom) or too hard (frustration)
+Anti-Boredom Engine detects both signals and adjusts difficulty_modifier within 2 quest cycles.
+Quest content feels generic or irrelevant
+MEDIUM
+AI generates boilerplate tasks not tied to real-world problems
+Prompt explicitly includes skill_node context and recent tech topics. Phase 2 adds Task Generator Agent for richer content.
+No visible community
+LOW initially
+Solo experience feels isolated
+Leaderboard in Phase 3. Guild system in Future Scope. Not a Day 1 problem.
+
+12.3  System Failure Recovery Matrix
+System Failure
+Severity
+User Impact
+Automated Recovery
+Groq API down
+HIGH
+Cannot generate new quests
+Fall back to Phi-2 local (Phase 2+) or serve yesterday&apos;s cached quests with UI notice: &quot;Using backup quests today.&quot;
+MongoDB Atlas down
+CRITICAL
+No user data access
+Serve cached quests from Redis. Log all progress locally. Batch sync on reconnect. Show system status banner.
+Railway service crash
+HIGH
+API returns 502
+Railway auto-restarts crashed services. Frontend shows &quot;Retrying in 30 seconds&quot; with exponential backoff on API calls.
+Evaluator fails mid-session
+MEDIUM
+Quest completion not registered
+Award 50% XP partial credit immediately. Flag for async re-evaluation. User sees &quot;Evaluation in progress&quot; — not an error state.
+Streak sync conflict (offline completion)
+MEDIUM
+Streak may be incorrect after sync
+Server is authoritative. On conflict, use server value. Notify user of correction with explanation.
+
+13  WHY THIS IS NOT JUST ANOTHER LEARNING APP
+★ NEW SECTION — Differentiation · Product Depth · Competitive Moat
+
+  ★ NEW SECTION  
+13.1  The Three Dimensions of Differentiation
+Dimension
+What Others Do
+What Cognarc Does
+Why It Matters
+Task Selection
+Static courses, manual browsing — user must decide what to learn
+AI-generated daily quests tailored to user&apos;s exact skill node and behavioral state
+Eliminates decision fatigue — the #1 reason developers abandon self-study plans
+Learning Progression
+Linear curriculum — same path for everyone regardless of prior knowledge
+Dependency-aware skill tree with behavioral adaptation — the system knows your actual state
+Users advance at their personal optimal pace, not a predetermined schedule
+Engagement Model
+Progress bars at best. &quot;Complete this module&quot; type gamification.
+Boss battles, streak shields, variable XP rewards, level-up ceremonies — game mechanics with real learning attached
+Psychological engagement hooks derived from game design, not productivity software
+Evaluation
+Quizzes with known answers. No real skill verification.
+Hybrid test cases + AI feedback for code. Timed boss battles for mastery verification.
+Actual skill demonstration, not recognition recall
+Adaptation Speed
+None — courses never change regardless of user behavior
+Anti-Boredom Engine adjusts after every 2 quests. Difficulty modifier recalculated after every session.
+System responds in near real-time to user state — no human intervention required
+
+13.2  AI-Generated Tasks vs Static Courses
+THE CORE INSIGHT
+Static courses sell content. Cognarc sells structured progression. The difference is that static content is the same for every user on day one and day one thousand. Cognarc&apos;s quests on day one are different from day one thousand — because the user is different. The system models this difference and exploits it.
+
+
+Static Courses (Coursera, Udemy)
+Cognarc Quest System
+Content Source
+Pre-recorded by an instructor once, never changes
+Generated fresh daily from user&apos;s current skill state + behavioral signals
+Personalization
+None — same video for all users at all stages
+Every quest is unique to the user&apos;s current node, difficulty modifier, and streak state
+Difficulty
+Fixed — beginner, intermediate, advanced labels chosen by instructor
+Continuously adapts based on completion time, failure rate, and behavioral signals
+Evaluation
+Multiple choice quizzes with predetermined answers
+Hybrid: test cases verify correctness + AI feedback assesses code quality and approach
+Motivation Mechanism
+Completion certificate (future state reward). Most users never reach it.
+Daily XP, streaks, level-ups, boss battles — present-state rewards that compound
+Drop-Off
+94% of MOOC users — primarily motivation collapse, not content quality
+Target &lt; 30% 30-day drop-off via engagement mechanics and personalized recovery
+
+13.3  Behavioral Adaptation vs Linear Learning
+Linear learning assumes every user is identical. Cognarc&apos;s behavioral adaptation engine treats every user as a unique signal source. The same skill node generates different quests for two users at different difficulty modifiers, different streak states, and different completion rate histories.
+User State
+What Cognarc Does
+Why This Is Non-Trivial to Build
+User is bored (completing quests in &lt; 50% of time)
+Raises difficulty_modifier; introduces new quest types; reduces theory ratio
+Requires per-session instrumentation, rolling time analysis, and prompt injection of behavioral state
+User is frustrated (&gt; 60% fail rate over 5 quests)
+Lowers difficulty; injects theory quest to rebuild missing foundation; activates gentler push notification language
+Requires failure rate tracking, causal analysis (theory gap vs execution gap), and intervention routing
+User has lapsed (2+ missed days)
+Activates Comeback Mode: 1 easy quest/day, 1.5x XP bonus, encouraging push notification copy
+Requires calendar-aware streak analysis and mode-switching in both backend and frontend
+User has plateaued (5+ days same node, 100% completion)
+Forces skill node advancement; generates bridge quest connecting current node to next
+Requires DAG traversal logic to identify the correct next node and generate a contextually appropriate transition quest
+
+13.4  Gamification Depth vs Superficial XP
+Many EdTech platforms have added &quot;gamification&quot; in the form of progress bars and completion percentages. This is surface-level gamification — it does not use the psychological mechanisms that make games compulsive. Cognarc implements the actual game mechanics:
+Game Mechanic
+Superficial EdTech Version
+Cognarc Implementation
+Psychology Exploited
+Progress Tracking
+Static progress bar. Never resets.
+XP bar that animates, overflows on level-up, shows velocity and streak multiplier
+Progress Principle (Amabile): visible daily momentum
+Achievement System
+&quot;Certificate of completion&quot; after finishing a course
+30+ badges for specific behaviors: streaks, boss victories, night owl completions, speed runs
+Variable reward: unpredictable badge triggers create habitual checking
+Challenge System
+Module difficulty labels. No stakes.
+Weekly Boss Battles: timed, multi-part, gated — fail and retry after 3 days
+Zeigarnik Effect: incomplete boss battles persist in working memory
+Loss Mechanics
+None — you can always come back
+Streak Shield: protects against one miss but has limited uses. Creates loss aversion without punishing failure.
+Loss aversion: the fear of losing a streak is 2× more motivating than gaining XP
+Social Competition
+None or generic platform leaderboard
+Peer group leaderboard (not global), guild XP totals, shared boss battle results
+Social comparison at the right peer level — not demotivating like global ranks
+
+14  DEVELOPMENT ROADMAP
+Phase 1 Through Phase 4 — Realistic Timeline
+
+Phase 1 — MVP Foundation (Days 1–10)
+GOAL
+A working system where a user can register, receive 3 AI-generated quests, mark them complete, and see their XP update. No gamification depth, no agents, no microservices — just the core data pipeline working end to end.
+
+Day
+Task
+Deliverable
+Validation Checkpoint
+1
+Project scaffold: Next.js + FastAPI + Docker Compose, env vars
+Repos initialized, all services start locally with health check endpoints
+GET /health returns 200 on all services
+2
+Supabase setup: Auth (magic link) + JWT middleware in FastAPI
+Working login flow, JWT decoded in FastAPI
+User can register and receive a valid JWT
+3
+MongoDB Atlas: users, quests, progress_logs collections + indexes
+Schema applied, CRUD tested from FastAPI
+User profile page loads with data from MongoDB
+4
+Groq API integration: AI Adapter + prompt template + output parser
+Working /ai/generate endpoint returning 3 quest objects
+3 valid quests generated from hardcoded user context
+5
+Quest Service: /quests/generate wired to AI Adapter + MongoDB storage
+Full quest generation pipeline end-to-end
+Quests generated from real user data and stored
+6
+Progress Service: quest completion + XP calculation
+Quest marked complete; progress_log created; XP stored
+User can complete a quest; XP updates in MongoDB
+7
+Next.js frontend: Dashboard + Quest cards (no animations)
+Basic UI showing 3 quests + XP + level
+User sees quests and can mark them done in browser
+8
+XP &amp; Level calculation: formulas in Gamification Engine
+Level derived from XP; XP bar shows progress to next level
+XP changes correctly after quest completion
+9
+Streak Engine: Redis streak tracking + MongoDB streaks collection
+Streak increments daily; resets on miss
+Streak count visible on dashboard; resets correctly
+10
+E2E testing + Railway deployment + Vercel deployment
+All services deployed, accessible via public URL
+Full loop working on production: register → quests → complete → XP updates
+
+Phase 2 — Core Engine (Days 11–25)
+Task
+Deliverable
+Expected Outcome
+Hybrid Evaluator: sandboxed test cases + AI quality feedback
+POST /quests/{id}/evaluate accepts code, runs test cases, returns score
+Code submissions evaluated with correctness score from test cases
+BGE-small deduplication: embed quests, cosine similarity check
+Quest regeneration triggered if similarity &gt; 0.85
+No repeated quests within 7-day window
+Anti-Boredom Engine: signal detection + difficulty_modifier update
+difficulty_modifier updated after each session
+Quest difficulty adapts to user behavior within 2 cycles
+PWA setup: next-pwa + Dexie.js + offline quest rendering
+App works offline; quests cached in IndexedDB
+Full offline access to today&apos;s quests
+Background sync: service worker queues completions when offline
+Pending sync queue in IndexedDB; syncs on reconnect
+Completions recorded even without connectivity
+Push notifications: streak warnings at 8PM and 10:30PM
+Push notification delivered if quest not completed by 8PM
+Users reminded before streak break
+Phi-2 local fallback: llama.cpp server containerized
+AI Adapter falls back to Phi-2 when Groq fails
+Quest generation works offline (lower quality, clearly labeled)
+
+Phase 3 — Full Gamification (Days 26–45)
+Task
+Deliverable
+Boss Battle system: weekly multi-part challenge + hybrid evaluation + 60-min timer
+Full boss battle UI with countdown; results stored in Supabase boss_battles table
+Achievement badge system: 30+ badges with trigger logic + badge display page
+Badges auto-awarded on trigger; visible on profile
+Leaderboard: Supabase materialized view refreshed every 15 min
+Live leaderboard page showing top 100 by XP
+Level-up ceremony: Framer Motion full-screen animation + title reveal
+Level-up modal triggers on XP crossing threshold
+Dashboard polish: skill tree DAG visualization, 90-day activity heatmap
+Recharts DAG view; GitHub-style heatmap in purple tones
+XP bar animation: smooth fill transition with overflow flash on level-up
+XP bar animates on every XP change with spring physics
+
+Phase 4 — Agentic AI (Days 46–70)
+Task
+Deliverable
+LangGraph agent graph: Planner → TaskGenerator → Evaluator → Adaptation
+Agent state machine in MongoDB; Sunday night Planner run automated
+Planner Agent: 7-day schedule with skill tree DAG awareness
+weekly_plan stored in users.agent_state; readable in UI
+Adaptation Agent: async behavioral analysis + profile update after each session
+behavioral_profile updated within 10 min of session end via background task
+Personalization Engine: session timing, content style, goal tracking
+Goal declared on onboarding; daily XP target back-calculated and displayed
+A/B testing: single-pipeline vs multi-agent quest quality comparison
+User satisfaction score (1–5) tracked per quest and compared across cohorts
+Documentation + demo video + GitHub README
+Full public repo with setup guide; demo deployed at cognarc.ai
+
+15  UI/UX DESIGN SYSTEM
+Dashboard · Quest Cards · Animations
+
+15.1  Design Tokens
+Token
+Value
+Usage
+Primary (Purple)
+#6D28D9
+Headings, XP bar fill, active buttons, skill node borders
+Accent (Gold)
+#D97706
+Streak indicators, boss battle highlights, achievement badges
+Surface Dark
+#0F0F1A
+Main background (dark mode default)
+Surface Card
+#1A1A2E
+Quest cards, modals, sidebar
+Text Primary
+#F8FAFC
+Headings, important data
+Text Secondary
+#94A3B8
+Labels, descriptions, metadata
+Success (Green)
+#10B981
+Quest completed, streak extended, boss defeated
+Warning (Amber)
+#F59E0B
+Streak warning, near-expiry items
+Danger (Red)
+#EF4444
+Streak lost, quest failed
+Font — Headings
+Space Grotesk (Google Fonts)
+Level numbers, quest titles, XP values
+Font — Body
+Inter
+Descriptions, labels, body text
+
+15.2  Dashboard Layout
+┌─────────────────────────────────────────────────────────────────┐
+│ HEADER: Logo │ Level 14 ▓▓▓▓▓░ 45,231 XP │ 🔥 8 │ Avatar      │
+├──────────────────────────────────────────────────────────────────┤
+│  ┌──────────────────────────────────┐  ┌──────────────────────┐ │
+│  │   TODAY&apos;S QUESTS (3)             │  │  SKILL TREE          │ │
+│  │  [Quest Card 1 — CODING]         │  │  AI Engineering ▶    │ │
+│  │  [Quest Card 2 — THEORY]         │  │  ◉ Python Basics ✓   │ │
+│  │  [Quest Card 3 — DEBUG]          │  │  ◎ RAG Systems ←you  │ │
+│  │                                  │  │  ○ Agentic AI (lock) │ │
+│  └──────────────────────────────────┘  └──────────────────────┘ │
+│  ┌──────────────┐  ┌────────────────┐  ┌──────────────────────┐ │
+│  │  STREAK      │  │  BOSS BATTLE   │  │  LEADERBOARD         │ │
+│  │  🔥 8 days   │  │  ⚔ AVAILABLE! │  │  #47 / 1,204  Top 4% │ │
+│  │  🛡 1 shield  │  │  RAG Systems   │  │  [View All]          │ │
+│  └──────────────┘  └────────────────┘  └──────────────────────┘ │
+│  ACTIVITY (90 days — GitHub heatmap style, purple tones)        │
+└─────────────────────────────────────────────────────────────────┘
+
+15.3  Animation Specifications
+Animation
+Trigger
+Implementation
+Duration
+XP Bar Fill
+On quest completion response
+Framer Motion width transition with spring physics
+0.8s ease-out
+Level-Up Burst
+On level threshold crossed
+Full-screen overlay: particle burst + title reveal + unlock list
+3.5s (cannot skip)
+Quest Completion
+On Mark Complete tap
+Card flips to success state with green glow + checkmark
+0.4s
+Streak Extension
+On first quest completion of day
+Flame emoji pulse + streak number increments
+0.6s
+Boss Battle Entry
+On Enter Boss Battle
+Screen dims → dramatic title card → countdown timer appears
+2.0s
+Skill Node Unlock
+On node mastery achieved
+Node pulses gold + connection lines draw to next node
+1.5s
+
+16  DEPLOYMENT STRATEGY — FREE
+Vercel · Railway · Supabase · MongoDB Atlas
+
+16.1  Frontend — Vercel (Hobby Plan)
+Connect GitHub repo to Vercel. Automatic deployment on push to main. Preview deployments on pull requests. Environment variables set in Vercel dashboard: NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY.
+
+16.2  Backend — Railway (MVP: Single Service)
+# Dockerfile for MVP FastAPI monolith:
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+CMD [&quot;uvicorn&quot;, &quot;main:app&quot;, &quot;--host&quot;, &quot;0.0.0.0&quot;, &quot;--port&quot;, &quot;8000&quot;]
+
+# MVP: ONE service, ONE port, ONE deployment
+# Phase 2+: Split into separate Railway services per microservice
+
+16.3  Database Setup
+Database
+Setup Steps
+Free Limit
+MongoDB Atlas
+1. Create M0 free cluster. 2. Whitelist Railway IPs. 3. Create DB user. 4. Copy connection string to Railway env.
+512MB — sufficient for 10,000+ users at MVP scale
+Supabase
+1. Create project. 2. Enable Auth providers (Magic Link). 3. Run SQL migrations. 4. Copy anon key to Vercel.
+500MB DB, 50,000 MAU, 2GB bandwidth/month
+Upstash Redis
+1. Create Redis database (REST API mode). 2. Copy REST URL and token to Railway env. 3. Use upstash/redis Python client.
+10,000 commands/day — covers streak + cache
+
+16.4  CI/CD Pipeline (GitHub Actions)
+# .github/workflows/deploy.yml
+on:
+  push:
+    branches: [main]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - pytest tests/          # FastAPI unit tests
+      - go test ./...           # Go service tests (Phase 2+)
+  lint:
+    - ruff check .              # Python
+    - golangci-lint run         # Go (Phase 2+)
+  deploy:
+    needs: [test, lint]
+    - Vercel: automatic via GitHub integration
+    - Railway: railway up --service cognarc-api
+
+17  CHALLENGES &amp; RISKS
+Honest Technical Risk Assessment
+
+Risk
+Severity
+Probability
+Mitigation Strategy
+Groq API Rate Limit (14,400 req/day)
+HIGH
+HIGH at scale
+BGE-small dedup reduces regeneration calls. Phi-2 fallback for overflow. Quest caching means 1 call/user/day baseline.
+Scope Creep / Overengineering in MVP
+HIGH
+HIGH
+Phase-gated development. MVP ships in 10 days regardless. Strict scope freezes. Phase 2 code in separate git branch.
+User Drop-Off (Days 3–7)
+HIGH
+HIGH
+Streak shield for early days. Push notifications at critical hours. Comeback Mode reduces friction after first miss.
+Phi-2 Quest Quality (Offline)
+MEDIUM
+MEDIUM
+Phi-2 quests are lower quality but acceptable for simple theory quests. Clearly marked as &quot;offline quest&quot; in UI.
+Code Evaluation Security (Sandboxing)
+HIGH
+MEDIUM
+User code runs in subprocess with timeout=10s, no network, no file system write. Never eval() user code.
+Multi-Agent Latency (Phase 4)
+MEDIUM
+HIGH
+LangGraph graph must complete in &lt;30s for synchronous paths. Adaptation Agent runs async — never blocks UI.
+Railway Free Credit Exhaustion
+LOW
+MEDIUM
+Monitor usage weekly. Render.com as backup. Fly.io as migration target. MVP monolith is very lightweight.
+AI Quest Repetition
+MEDIUM
+HIGH without mitigation
+BGE-small deduplication with 7-day window. Prompt explicitly lists recent quest summaries. Regenerate if similarity &gt; 0.85.
+
+18  FUTURE SCOPE
+Roadmap Beyond the Current Build
+
+Feature
+Priority
+Est. Effort
+Description
+Mobile App (React Native)
+P0
+3 months
+Native iOS/Android app using Expo. Shares same API layer. Adds haptic feedback on XP gain, native push notifications.
+Multiplayer / Guild System
+P0
+2 months
+Users form guilds of 5–10. Weekly guild XP competition. Shared boss battles. Guild leaderboard.
+AI Tutor Mode
+P1
+2 months
+Conversational AI assistant per quest. Ask clarifying questions, get hints, request code review — all in-context.
+Quest Marketplace
+P1
+3 months
+Users create and publish quests. Community votes. Top-voted quests enter the official quest pool.
+Job Integration
+P2
+1 month
+Connect to LinkedIn Jobs / Wellfound API. System identifies skill gaps for a target job posting and adjusts skill tree.
+Company Team Plans
+P1
+2 months
+Teams onboard together. Manager sees team skill dashboard. Custom skill trees per role.
+LLM Fine-Tuning on Quest Data
+P3
+4 months
+Fine-tune Phi-2 on accumulated quest-completion dataset. Dramatically improves offline quest quality.
+Browser Extension
+P3
+1 month
+Chrome extension shows daily XP goal status. Streak reminder badge on extension icon.
+
+MONETIZATION
+Free tier (full features, 3 quests/day). Pro tier ($5/month): unlimited quests, boss battles, advanced analytics, priority AI. Team tier ($15/seat/month): company dashboards, custom skill trees, manager reporting. All paid features are quality-of-life improvements — the core skill development loop is always free.
+
+⚔  COGNARC
+Cognitive Optimization &amp; Gamified Neural Adaptive Reinforcement Console
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Built to be real, not just documented.
+Single developer. Free tier. Production system.
+★ NEW IN v2.0 — Sections 10, 11, 12, 13 added: Execution Strategy · Validation Plan · Failure Recovery · Product Differentiation
+© Cognarc — Confidential &amp; Proprietary  |  v2.0 Execution Edition

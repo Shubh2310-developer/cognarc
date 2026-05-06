@@ -1,0 +1,96 @@
+# ── COGNARC MONOREPO GITIGNORE ────────────────────────────────
+
+# ── Global Dot-File Block ──
+.*
+!.gitignore
+!.github/
+
+# ── Environment & Secrets (CRITICAL) ──
+.env
+.env.*
+!.env.example
+!.env.local.example
+*.env
+*.pem
+*.key
+secrets.json
+config/secrets/*
+!config/secrets/.gitkeep
+
+# ── Node.js / Turborepo ──
+node_modules/
+.npm
+.pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.turbo/
+.cache/
+dist/
+build/
+.next/
+out/
+.vercel/
+.railway/
+pnpm-lock.yaml
+
+# ── Python / FastAPI ──
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+python/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.coverage
+htmlcov/
+nosetests.xml
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ── AI / ML / Data ──
+# Ignore large model weights and local data
+*.pt
+*.pth
+*.bin
+*.gguf
+*.onnx
+data/exports/*
+data/embeddings/*
+data/local/*.db
+data/local/*.sqlite
+!data/seeds/
+!data/mock-data/
+ai-services/embeddings/faiss_index/
+ai-services/memory/local_store/
+
+# ── Infrastructure & Local Tools ──
+.code-review-graph/
+.kiro/
+.claude/settings.json
+*.log
+logs/
+*.swp
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
+.claude 
+.cursor
+.kiro   
+.agents
+.cursor
+# ── IDEs ──
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ── Docker ──
+.docker/
+# (Keep actual Dockerfiles, ignore only specific transient data)
