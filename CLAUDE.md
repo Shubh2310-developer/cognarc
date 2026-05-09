@@ -40,7 +40,7 @@
 
 ## §00.5 — PROVISIONED INFRASTRUCTURE
 
-> **Status as of 2026-05-07 — Environment fully verified and developer-ready.**
+> **Status as of 2026-05-09 — Phase 01 (UI Foundation) + Phase 02 (Data Modeling) COMPLETE.**
 > All keys confirmed working via `scripts/verify_keys.py`.
 
 ### External Services (All Provisioned)
@@ -111,6 +111,74 @@ To regenerate: `npx web-push generate-vapid-keys` (use `npx`, not `npm install -
 | `npm install -g web-push` permission error | ✅ Documented | Use `npx web-push generate-vapid-keys` instead |
 | `llama-cpp-python` CUDA build fails | ⏳ Pending | Needs `gcc13` from AUR (`yay -S gcc13`) |
 | Supabase Anon Key health check 401 | ⚠️ Investigate | Service role key works. Re-check anon key in Supabase dashboard → Settings → API |
+| pytest must use cognarc conda env | ✅ Documented | Run with `/home/agentrogue/miniconda3/envs/cognarc/bin/python -m pytest` |
+
+---
+
+## §00.6 — PHASE COMPLETION STATUS
+
+> **Update this section at end of every phase. It is the canonical state-of-the-world for any new agent.**
+
+### Phase 01 — UI Foundation ✅ COMPLETE (2026-05-08)
+
+| Deliverable | Status | Location |
+|---|---|---|
+| Next.js 14 App Router scaffold | ✅ | `apps/web/` |
+| Tactical IDE design system (Obsidian/Forge/Volt tokens) | ✅ | `packages/design-tokens/` |
+| Dashboard page + XPBar + QuestCard + Odometer | ✅ | `apps/web/app/dashboard/` + `features/` |
+| Login page (Supabase magic link) | ✅ | `apps/web/app/login/` |
+| Navbar + Sidebar (tactical HUD layout) | ✅ | `apps/web/src/shared/components/layout/` |
+| FastAPI app + auth middleware + health routes | ✅ | `apps/api/app/` |
+| Docker Compose dev setup | ✅ | `docker-compose.dev.yml` |
+
+### Phase 02 — Data Modeling ✅ COMPLETE (2026-05-09)
+
+| Task | Status | Location |
+|---|---|---|
+| T1.1-T1.4: Pydantic domain models (User, Quest, ProgressLog, Streak) | ✅ | `apps/api/app/models/` |
+| T2.1-T2.4: API request/response schemas + TypeScript type sync | ✅ | `apps/api/app/schemas/` · `packages/shared-types/src/index.ts` |
+| T3.1-T3.5: MongoDB index script (compound, unique, TTL) | ✅ | `scripts/apply_indexes.py` |
+| T4.1: User repository (create, get_by_auth_id, get_by_id, update, update_skill_state) | ✅ | `apps/api/app/repositories/mongo/user_repository.py` |
+| T4.2: Quest repository (create, get_by_id, update_status, daily fetch, recent) | ✅ | `apps/api/app/repositories/mongo/quest_repository.py` |
+| T4.3: Progress repository (create_log, get_logs, completion_rate_7d) | ✅ | `apps/api/app/repositories/mongo/progress_repository.py` |
+| T4.4: Streak repository (get_streak, upsert_streak) | ✅ | `apps/api/app/repositories/mongo/streak_repository.py` |
+| T4.5: Redis cache (quest cache + streak counter, Upstash REST) | ✅ | `apps/api/app/repositories/cache/redis_cache.py` |
+| T5.1-T5.3: Supabase migration (leaderboard, achievements, boss_battles + RLS) | ✅ Applied | `infrastructure/supabase/migrations/001_initial_schema.sql` |
+| T6.1: Skill tree seed data (4 trees, 31 nodes, DAG dependencies) | ✅ | `data/seed/skill_trees.json` |
+| T6.2: Seed user script (idempotent, full behavioral profile) | ✅ | `data/seed/seed_user.py` |
+| T6.3: Seed quests script (3 quest types, idempotent) | ✅ | `data/seed/seed_quests.py` |
+| Tests: 72 unit + integration tests passing | ✅ **72/72** | `apps/api/tests/unit/` · `apps/api/tests/integration/` |
+
+**Phase 02 Key Rules Confirmed:**
+- `extra="forbid"` enforced on ALL Pydantic domain models.
+- Motor async driver ONLY — no synchronous pymongo in any repository.
+- Redis is cache-only. MongoDB is the source of truth for XP, streak, and skill state.
+- Repository layer has exclusive DB access authority. Zero business logic in repositories.
+- Supabase RLS applied: `leaderboard` (read-public), `achievements` (insert service-role only), `boss_battles` (own-row policies).
+
+**Phase 02 Run Commands:**
+```bash
+# Run test suite
+/home/agentrogue/miniconda3/envs/cognarc/bin/python -m pytest apps/api/tests/unit/ apps/api/tests/integration/ -v
+
+# Apply MongoDB indexes
+source config/environments/.env.development
+/home/agentrogue/miniconda3/envs/cognarc/bin/python scripts/apply_indexes.py
+
+# Seed development data
+/home/agentrogue/miniconda3/envs/cognarc/bin/python data/seed/seed_user.py
+/home/agentrogue/miniconda3/envs/cognarc/bin/python data/seed/seed_quests.py
+```
+
+### Phase 03 — AI Pipeline 🔜 NEXT
+
+Next tasks (do NOT start until Phase 02 is confirmed passing in CI):
+- Groq API adapter in `apps/api/app/adapters/groq_adapter.py`
+- Quest generation service in `apps/api/app/services/quest_service.py`
+- Evaluation service in `apps/api/app/services/evaluation_service.py`
+- Gamification engine in `apps/api/app/engines/gamification_engine/`
+- Wire up `/quests/generate` and `/quests/{id}/evaluate` routes
+- BGE-small embedding dedup in `ai-services/embeddings/`
 
 ---
 
@@ -531,11 +599,11 @@ ai-services/
 - `progress_logs`: user_id, quest_id, completed_at, xp_earned, time_taken_min, evaluation_score
 - `streaks`: user_id, current_streak, longest_streak, last_completion_date, shield_count
 
-**Index Requirements:**
+**Index Requirements (All Applied — see `scripts/apply_indexes.py`):**
 - `users`: `auth_id` (unique), `level` (for leaderboard aggregation)
-- `quests`: `{user_id, date}` (compound, for daily fetch), `status` (for pending queries)
-- `quests.embedding`: TTL index 30 days
-- `progress_logs`: `{user_id, completed_at}` (compound)
+- `quests`: `{user_id, date}` (compound, for daily fetch), `status` (for pending queries), `created_at` TTL 30d (2,592,000s)
+- `progress_logs`: `{user_id, completed_at}` (compound), `completed_at` TTL 90d (7,776,000s)
+- `streaks`: `user_id` (unique — one document per user)
 
 ### Supabase Table Rules
 
@@ -815,7 +883,7 @@ Add: LangGraph multi-agent graph (Planner→TaskGenerator→Evaluator→Adaptati
 
 | Change Type | Required Checks |
 |---|---|
-| Python backend | `pytest tests/ -v` + `ruff check .` + `mypy` |
+| Python backend | `/home/agentrogue/miniconda3/envs/cognarc/bin/python -m pytest tests/ -v` + `ruff check .` + `mypy` |
 | TypeScript frontend | `npx tsc --noEmit` + `npm run lint` + `npm run test` |
 | AI prompt change | AI eval suite in Langsmith before merge |
 | Database schema | Migration reversibility test (`alembic downgrade -1` in dev) |
