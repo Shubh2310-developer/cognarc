@@ -1,54 +1,21 @@
-# ══════════════════════════════════════════════════════════════
-# COGNARC — AI Services (ML / Inference)
-# Python 3.12 | Conda env: cognarc
-# Hardware: RTX 4050 Mobile (6GB VRAM) | CUDA 13.2
-#
-# ⚠️  GPU INSTALL NOTES:
-#   1. PyTorch (CUDA 12.4 build — backward compatible with CUDA 13.2 driver):
-#      pip install torch==2.7.0 torchvision==0.22.0 \
-#        --index-url https://download.pytorch.org/whl/cu124
-#
-#   2. llama-cpp-python (CUDA-accelerated for Phi-2 local fallback):
-#      CMAKE_ARGS="-DGGML_CUDA=on" pip install llama-cpp-python==0.3.8
-#
-#   These two MUST be installed manually before running `pip install -r requirements.txt`.
-# ══════════════════════════════════════════════════════════════
+"""
+COGNARC — ai-services Phase-3 MVP Dependencies
+ai-services/requirements.txt
 
-# ── PyTorch — install manually (see notes above) ──────────────
-# torch==2.6.0+cu124
-# torchvision==0.21.0+cu124
+T1.2: groq, pydantic>=2.0, tenacity, httpx — raw SDK only, no frameworks.
+§07: NO LangChain, NO LangGraph, NO LlamaIndex. Direct HTTP/Groq SDK only.
+"""
+# ── Core AI Client ────────────────────────────────────────────
+groq>=0.30.0,<1.0.0           # Groq Python SDK — direct chat.completions API
 
-# ── Embeddings (BGE-small-en — ~130MB, runs on CPU or GPU) ───
-sentence-transformers==4.1.0
-transformers==4.51.3
-accelerate==1.7.0
+# ── Data Validation ───────────────────────────────────────────
+pydantic>=2.0,<3.0             # Pydantic v2 for output parsing + validation
 
-# ── Vector Search (FAISS — for deduplication) ─────────────────
-# Use faiss-gpu if torch+cuda is installed, else faiss-cpu is fine
-faiss-cpu==1.10.0
+# ── Retry Logic ───────────────────────────────────────────────
+tenacity>=8.2.0,<9.0.0         # Retry with exponential backoff (max 2 attempts)
 
-# ── Local LLM Inference (Phi-2 Q4_K_M fallback) ──────────────
-# Install manually (see notes above):
-# llama-cpp-python==0.3.8
+# ── HTTP Client / Timeout Wrapper ─────────────────────────────
+httpx>=0.27.0,<1.0.0           # httpx.Timeout for 15s read timeout wrapper
 
-# ── LangChain / LangGraph (Phase 4 — Agentic Orchestration) ──
-# Comment out for MVP (Phases 1–6). Uncomment when entering Phase 4.
-# langchain-core==0.3.58
-# langchain-groq==0.3.3
-# langgraph==0.4.7
-
-# ── Groq AI Gateway ───────────────────────────────────────────
-groq==0.28.0
-
-# ── Observability (AI traces) ─────────────────────────────────
-langfuse==2.60.0
-
-# ── Numerical Utilities ───────────────────────────────────────
-numpy==2.2.5
-scipy==1.15.3
-
-# ── Shared with API ───────────────────────────────────────────
-pydantic==2.11.4
-httpx==0.28.1
-tenacity==9.1.2
-python-dotenv==1.1.0
+# ── Observability ─────────────────────────────────────────────
+langfuse>=2.0.0,<3.0.0         # Langfuse tracing for all Groq calls (tokens, latency)

@@ -78,6 +78,38 @@ async def create_quest(quest: Quest) -> Quest:
     return _doc_to_quest(stored)
 
 
+async def create_many(quests: List[Quest]) -> List[Quest]:
+    """
+    T5.1: Batch insert multiple quests in a single MongoDB operation.
+    Used by quest_service after AI generation — stores all 3 quests atomically.
+    Returns the list of persisted Quest models.
+    §06: DB access only. No business logic here.
+    """
+    if not quests:
+        return []
+
+    col = _get_col()
+    t0 = time.monotonic()
+
+    docs = [q.model_dump() for q in quests]
+    result = await col.insert_many(docs)
+
+    duration_ms = (time.monotonic() - t0) * 1000
+    _log_op(
+        "create_many",
+        duration_ms,
+        {"count": len(quests), "user_id": quests[0].user_id if quests else None},
+    )
+
+    # Re-fetch all inserted docs
+    inserted_ids = result.inserted_ids
+    stored: List[Quest] = []
+    async for doc in col.find({"_id": {"$in": inserted_ids}}):
+        stored.append(_doc_to_quest(doc))
+
+    return stored
+
+
 async def update_quest_status(quest_id: str, status: str) -> None:
     """
     Set the status field on a quest by its quest_id string.
