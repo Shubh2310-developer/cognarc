@@ -1,0 +1,18 @@
+# ══════════════════════════════════════════════════════════════
+# COGNARC — AI Services: Phase 9 — Advanced Gamification
+# Python 3.12 | Conda env: cognarc
+# GATE: Do NOT install until Phase 8 is stable in production
+#
+# Install with:
+#   pip install -r ai-services/requirements.phase9.txt
+# ══════════════════════════════════════════════════════════════
+
+# ── Recommendation Engine (boss battle generation, skill tree) ─
+scikit-learn==1.6.1          # Pulled in from phase8 — idempotent
+
+# ── Advanced XP math / statistical analysis ───────────────────
+scipy==1.15.3                # Pulled in from base — idempotent
+
+# ── Real-time leaderboard (WebSocket pub/sub) ────────────────
+# FastAPI + Upstash Redis already cover this via existing deps
+# No additional Python packages needed for Phase 9

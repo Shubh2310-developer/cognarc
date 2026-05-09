@@ -1,0 +1,356 @@
+{
+  "skill_trees": [
+    {
+      "id": "AI Engineering",
+      "display_name": "AI Engineering",
+      "description": "Foundational to advanced AI/ML engineering skills covering Python, ML frameworks, LLMs and deployment.",
+      "icon": "🤖",
+      "nodes": [
+        {
+          "id": "python-basics",
+          "title": "Python Basics",
+          "description": "Variables, data types, loops, functions, and modules.",
+          "difficulty": "easy",
+          "xp_reward_base": 50,
+          "estimated_hours": 8,
+          "prerequisites": [],
+          "quest_types": ["theory", "coding"]
+        },
+        {
+          "id": "python-oop",
+          "title": "Python OOP",
+          "description": "Classes, inheritance, dunder methods, dataclasses.",
+          "difficulty": "easy",
+          "xp_reward_base": 75,
+          "estimated_hours": 10,
+          "prerequisites": ["python-basics"],
+          "quest_types": ["coding", "debug"]
+        },
+        {
+          "id": "python-advanced",
+          "title": "Advanced Python",
+          "description": "Generators, decorators, async/await, type hints, metaclasses.",
+          "difficulty": "medium",
+          "xp_reward_base": 100,
+          "estimated_hours": 12,
+          "prerequisites": ["python-oop"],
+          "quest_types": ["coding", "debug", "build"]
+        },
+        {
+          "id": "numpy-pandas",
+          "title": "NumPy & Pandas",
+          "description": "Array operations, DataFrames, vectorisation, and data wrangling.",
+          "difficulty": "easy",
+          "xp_reward_base": 75,
+          "estimated_hours": 10,
+          "prerequisites": ["python-basics"],
+          "quest_types": ["coding", "research"]
+        },
+        {
+          "id": "ml-fundamentals",
+          "title": "ML Fundamentals",
+          "description": "Supervised / unsupervised learning, loss functions, gradient descent.",
+          "difficulty": "medium",
+          "xp_reward_base": 125,
+          "estimated_hours": 15,
+          "prerequisites": ["numpy-pandas", "python-advanced"],
+          "quest_types": ["theory", "coding", "research"]
+        },
+        {
+          "id": "deep-learning",
+          "title": "Deep Learning",
+          "description": "Neural networks, backprop, CNNs, RNNs with PyTorch.",
+          "difficulty": "hard",
+          "xp_reward_base": 200,
+          "estimated_hours": 20,
+          "prerequisites": ["ml-fundamentals"],
+          "quest_types": ["coding", "build", "debug"]
+        },
+        {
+          "id": "llm-fundamentals",
+          "title": "LLM Fundamentals",
+          "description": "Transformers, attention, tokenisation, prompt engineering basics.",
+          "difficulty": "medium",
+          "xp_reward_base": 150,
+          "estimated_hours": 15,
+          "prerequisites": ["deep-learning"],
+          "quest_types": ["theory", "research", "coding"]
+        },
+        {
+          "id": "rag-systems",
+          "title": "RAG Systems",
+          "description": "Vector databases, embeddings, retrieval-augmented generation pipelines.",
+          "difficulty": "hard",
+          "xp_reward_base": 250,
+          "estimated_hours": 20,
+          "prerequisites": ["llm-fundamentals"],
+          "quest_types": ["build", "coding", "research"]
+        },
+        {
+          "id": "ai-agents",
+          "title": "AI Agents",
+          "description": "LangChain / LangGraph agent architectures, tool use, memory, multi-agent systems.",
+          "difficulty": "hard",
+          "xp_reward_base": 300,
+          "estimated_hours": 25,
+          "prerequisites": ["rag-systems"],
+          "quest_types": ["build", "research", "coding"]
+        },
+        {
+          "id": "mlops",
+          "title": "MLOps & Deployment",
+          "description": "Model serving, Docker, CI/CD for ML, monitoring, drift detection.",
+          "difficulty": "hard",
+          "xp_reward_base": 275,
+          "estimated_hours": 20,
+          "prerequisites": ["deep-learning"],
+          "quest_types": ["build", "debug", "research"]
+        },
+        {
+          "id": "ai-engineering-boss",
+          "title": "AI Engineering Boss Battle",
+          "description": "Build a fully functional RAG-powered AI agent with evaluation and observability.",
+          "difficulty": "boss",
+          "xp_reward_base": 1000,
+          "estimated_hours": 48,
+          "prerequisites": ["ai-agents", "mlops"],
+          "quest_types": ["build"]
+        }
+      ]
+    },
+    {
+      "id": "Web Development",
+      "display_name": "Web Development",
+      "description": "Full-stack web development from HTML/CSS basics to production-ready Next.js and FastAPI systems.",
+      "icon": "🌐",
+      "nodes": [
+        {
+          "id": "html-css",
+          "title": "HTML & CSS",
+          "description": "Semantic HTML, CSS layouts (flexbox/grid), responsive design.",
+          "difficulty": "easy",
+          "xp_reward_base": 50,
+          "estimated_hours": 8,
+          "prerequisites": [],
+          "quest_types": ["coding", "build"]
+        },
+        {
+          "id": "javascript-core",
+          "title": "JavaScript Core",
+          "description": "DOM manipulation, async patterns, ES6+, fetch API.",
+          "difficulty": "easy",
+          "xp_reward_base": 75,
+          "estimated_hours": 12,
+          "prerequisites": ["html-css"],
+          "quest_types": ["coding", "debug"]
+        },
+        {
+          "id": "typescript",
+          "title": "TypeScript",
+          "description": "Type system, generics, utility types, strict mode, type-safe APIs.",
+          "difficulty": "medium",
+          "xp_reward_base": 100,
+          "estimated_hours": 10,
+          "prerequisites": ["javascript-core"],
+          "quest_types": ["coding", "debug"]
+        },
+        {
+          "id": "react-fundamentals",
+          "title": "React Fundamentals",
+          "description": "Components, hooks, state management, useEffect, React Query.",
+          "difficulty": "medium",
+          "xp_reward_base": 125,
+          "estimated_hours": 15,
+          "prerequisites": ["typescript"],
+          "quest_types": ["coding", "build", "debug"]
+        },
+        {
+          "id": "nextjs",
+          "title": "Next.js 14",
+          "description": "App Router, Server Components, data fetching, middleware, deployment.",
+          "difficulty": "hard",
+          "xp_reward_base": 200,
+          "estimated_hours": 20,
+          "prerequisites": ["react-fundamentals"],
+          "quest_types": ["build", "coding", "debug"]
+        },
+        {
+          "id": "python-backend",
+          "title": "Python Backend",
+          "description": "FastAPI, Pydantic, async patterns, dependency injection.",
+          "difficulty": "medium",
+          "xp_reward_base": 150,
+          "estimated_hours": 15,
+          "prerequisites": ["javascript-core"],
+          "quest_types": ["coding", "build"]
+        },
+        {
+          "id": "databases",
+          "title": "Databases",
+          "description": "PostgreSQL, MongoDB, indexing, query optimisation, ORMs.",
+          "difficulty": "medium",
+          "xp_reward_base": 150,
+          "estimated_hours": 15,
+          "prerequisites": ["python-backend"],
+          "quest_types": ["coding", "research", "debug"]
+        },
+        {
+          "id": "fullstack-deploy",
+          "title": "Fullstack Deployment",
+          "description": "Docker, CI/CD, Vercel, Railway, environment management.",
+          "difficulty": "hard",
+          "xp_reward_base": 250,
+          "estimated_hours": 20,
+          "prerequisites": ["nextjs", "databases"],
+          "quest_types": ["build", "debug"]
+        },
+        {
+          "id": "web-boss",
+          "title": "Web Dev Boss Battle",
+          "description": "Build and deploy a production full-stack app with auth, DB, and CI/CD.",
+          "difficulty": "boss",
+          "xp_reward_base": 1000,
+          "estimated_hours": 48,
+          "prerequisites": ["fullstack-deploy"],
+          "quest_types": ["build"]
+        }
+      ]
+    },
+    {
+      "id": "Data Science",
+      "display_name": "Data Science",
+      "description": "Statistical analysis, data wrangling, visualisation, and machine learning for insights.",
+      "icon": "📊",
+      "nodes": [
+        {
+          "id": "statistics-basics",
+          "title": "Statistics Basics",
+          "description": "Descriptive stats, distributions, hypothesis testing, p-values.",
+          "difficulty": "easy",
+          "xp_reward_base": 60,
+          "estimated_hours": 10,
+          "prerequisites": [],
+          "quest_types": ["theory", "research"]
+        },
+        {
+          "id": "data-wrangling",
+          "title": "Data Wrangling",
+          "description": "Pandas pipelines, missing data, feature engineering, merging.",
+          "difficulty": "easy",
+          "xp_reward_base": 75,
+          "estimated_hours": 10,
+          "prerequisites": ["statistics-basics"],
+          "quest_types": ["coding", "debug"]
+        },
+        {
+          "id": "visualisation",
+          "title": "Data Visualisation",
+          "description": "Matplotlib, Seaborn, Plotly, storytelling with data.",
+          "difficulty": "easy",
+          "xp_reward_base": 75,
+          "estimated_hours": 8,
+          "prerequisites": ["data-wrangling"],
+          "quest_types": ["build", "coding"]
+        },
+        {
+          "id": "ml-for-ds",
+          "title": "ML for Data Science",
+          "description": "Sklearn pipelines, cross-validation, feature selection, ensemble methods.",
+          "difficulty": "medium",
+          "xp_reward_base": 150,
+          "estimated_hours": 15,
+          "prerequisites": ["visualisation"],
+          "quest_types": ["coding", "research", "build"]
+        },
+        {
+          "id": "time-series",
+          "title": "Time Series Analysis",
+          "description": "ARIMA, Prophet, LSTM for forecasting, anomaly detection.",
+          "difficulty": "hard",
+          "xp_reward_base": 225,
+          "estimated_hours": 20,
+          "prerequisites": ["ml-for-ds"],
+          "quest_types": ["coding", "research", "build"]
+        },
+        {
+          "id": "ds-boss",
+          "title": "Data Science Boss Battle",
+          "description": "End-to-end Kaggle-style competition: EDA → model → deploy predictions.",
+          "difficulty": "boss",
+          "xp_reward_base": 1000,
+          "estimated_hours": 48,
+          "prerequisites": ["time-series"],
+          "quest_types": ["build", "research"]
+        }
+      ]
+    },
+    {
+      "id": "System Design",
+      "display_name": "System Design",
+      "description": "Distributed systems, scalability patterns, and production engineering principles.",
+      "icon": "🏗️",
+      "nodes": [
+        {
+          "id": "networking-basics",
+          "title": "Networking Fundamentals",
+          "description": "TCP/IP, HTTP/HTTPS, DNS, load balancing basics.",
+          "difficulty": "easy",
+          "xp_reward_base": 60,
+          "estimated_hours": 8,
+          "prerequisites": [],
+          "quest_types": ["theory", "research"]
+        },
+        {
+          "id": "api-design",
+          "title": "API Design",
+          "description": "REST principles, versioning, pagination, rate limiting, OpenAPI.",
+          "difficulty": "medium",
+          "xp_reward_base": 100,
+          "estimated_hours": 10,
+          "prerequisites": ["networking-basics"],
+          "quest_types": ["build", "theory"]
+        },
+        {
+          "id": "caching",
+          "title": "Caching Strategies",
+          "description": "Redis, CDN, cache invalidation patterns, TTL design.",
+          "difficulty": "medium",
+          "xp_reward_base": 125,
+          "estimated_hours": 10,
+          "prerequisites": ["api-design"],
+          "quest_types": ["theory", "build", "debug"]
+        },
+        {
+          "id": "databases-scale",
+          "title": "Databases at Scale",
+          "description": "Sharding, replication, CAP theorem, partitioning, indexes at scale.",
+          "difficulty": "hard",
+          "xp_reward_base": 200,
+          "estimated_hours": 15,
+          "prerequisites": ["caching"],
+          "quest_types": ["theory", "research"]
+        },
+        {
+          "id": "distributed-systems",
+          "title": "Distributed Systems",
+          "description": "Consensus, event sourcing, CQRS, message queues, microservices.",
+          "difficulty": "hard",
+          "xp_reward_base": 250,
+          "estimated_hours": 20,
+          "prerequisites": ["databases-scale"],
+          "quest_types": ["theory", "build", "research"]
+        },
+        {
+          "id": "system-design-boss",
+          "title": "System Design Boss Battle",
+          "description": "Design a Twitter/YouTube-scale system end-to-end with capacity estimates.",
+          "difficulty": "boss",
+          "xp_reward_base": 1000,
+          "estimated_hours": 48,
+          "prerequisites": ["distributed-systems"],
+          "quest_types": ["build", "research"]
+        }
+      ]
+    }
+  ]
+}

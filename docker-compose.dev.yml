@@ -1,0 +1,83 @@
+# ══════════════════════════════════════════════════════════════
+# COGNARC — Docker Compose Dev Overrides
+# docker-compose.dev.yml
+#
+# T1.11: Volume mounts for hot reload in development.
+# Usage: docker compose -f docker-compose.dev.yml up -d
+#        (also aliased to: make dev)
+# ══════════════════════════════════════════════════════════════
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+      target: deps   # Stop at deps layer — source is volume-mounted
+    container_name: cognarc-api-dev
+    ports:
+      - "8000:8000"
+    volumes:
+      # Hot reload: mount source code into container
+      - ./apps/api/app:/app/app:ro
+    environment:
+      - APP_ENV=development
+      - DEBUG=true
+      - LOG_LEVEL=debug
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - SUPABASE_JWT_SECRET=${SUPABASE_JWT_SECRET}
+      - MONGODB_URL=${MONGODB_URL}
+      - MONGODB_DB_NAME=${MONGODB_DB_NAME:-cognarc}
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - UPSTASH_REDIS_REST_URL=${UPSTASH_REDIS_REST_URL}
+      - UPSTASH_REDIS_REST_TOKEN=${UPSTASH_REDIS_REST_TOKEN}
+      - SENTRY_DSN=${SENTRY_DSN}
+      - CORS_ORIGINS=http://localhost:3000
+    command:
+      - uvicorn
+      - app.main:app
+      - --host
+      - "0.0.0.0"
+      - --port
+      - "8000"
+      - --reload         # Hot reload on source changes
+      - --log-level
+      - debug
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - cognarc-net
+
+  web:
+    image: node:20-alpine
+    container_name: cognarc-web-dev
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    volumes:
+      # Hot reload: mount full monorepo, node_modules excluded
+      - .:/app
+      - /app/node_modules
+      - /app/apps/web/node_modules
+      - /app/apps/web/.next
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - NEXT_PUBLIC_APP_ENV=development
+    command: sh -c "npm install -g pnpm@10.33.4 && pnpm --filter web run dev"
+    depends_on:
+      - api
+    networks:
+      - cognarc-net
+
+networks:
+  cognarc-net:
+    driver: bridge
+    name: cognarc-net

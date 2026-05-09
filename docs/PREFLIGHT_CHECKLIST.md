@@ -94,7 +94,7 @@ These require sign-up. All have **free tiers** that cover the full MVP.
 
 8. Go to **Authentication → Settings → Auth Providers**
 9. Enable **Email (Magic Link)** — toggle it on, save
-
+ 
 ---
 
 ### B2. MongoDB Atlas (primary database)

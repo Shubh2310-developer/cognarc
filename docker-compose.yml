@@ -1,0 +1,89 @@
+# ══════════════════════════════════════════════════════════════
+# COGNARC — Docker Compose (Base / Production)
+# docker-compose.yml
+#
+# T1.10: api (port 8000) + web (port 3000) on cognarc-net.
+# §03: ONE FastAPI app, ONE port (8000). No microservices.
+# §01: Container memory limits ≤ 3 GB per service (dev hardware).
+#
+# Usage:
+#   docker compose up -d                 (production-like)
+#   docker compose -f docker-compose.dev.yml up -d  (hot reload)
+# ══════════════════════════════════════════════════════════════
+
+services:
+  # ── FastAPI Backend ──────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: cognarc-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=${APP_ENV:-production}
+      - APP_PORT=8000
+      - DEBUG=false
+      - LOG_LEVEL=INFO
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - SUPABASE_JWT_SECRET=${SUPABASE_JWT_SECRET}
+      - MONGODB_URL=${MONGODB_URL}
+      - MONGODB_DB_NAME=${MONGODB_DB_NAME:-cognarc}
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - UPSTASH_REDIS_REST_URL=${UPSTASH_REDIS_REST_URL}
+      - UPSTASH_REDIS_REST_TOKEN=${UPSTASH_REDIS_REST_TOKEN}
+      - SENTRY_DSN=${SENTRY_DSN}
+      - CORS_ORIGINS=http://localhost:3000,${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - cognarc-net
+    deploy:
+      resources:
+        limits:
+          memory: 2g
+          cpus: "2.0"
+
+  # ── Next.js Frontend ──────────────────────────────────────────
+  web:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/web/Dockerfile
+    container_name: cognarc-web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - NEXT_PUBLIC_APP_ENV=${APP_ENV:-production}
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - cognarc-net
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+          cpus: "1.0"
+
+networks:
+  cognarc-net:
+    driver: bridge
+    name: cognarc-net

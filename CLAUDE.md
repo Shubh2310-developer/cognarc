@@ -5,7 +5,116 @@
 
 ---
 
-## §01 — PROJECT OVERVIEW
+## §00 — DEVELOPER SYSTEM SPECS
+
+> **AGENT INSTRUCTIONS:** Always read this section to understand hardware constraints before
+> recommending dependencies, Docker memory limits, or ML model sizes.
+
+| Component | Spec |
+|---|---|
+| **OS** | EndeavourOS (Arch Linux) x86_64 — Kernel 6.18.26-2-lts |
+| **CPU** | AMD Ryzen 7 7735HS (16 threads) @ 3.20 GHz |
+| **RAM** | ~15 GB total (~5–6 GB typically free during dev) |
+| **GPU** | NVIDIA GeForce RTX 4050 Mobile Max-Q (Discrete) |
+| **VRAM** | **6 GB** (6141 MiB) — ~4.7 GB available after display/KDE |
+| **CUDA Driver** | 595.71.05 → CUDA Runtime **13.2** |
+| **GPU 2** | AMD Radeon 680M (Integrated — for display only) |
+| **Python** | **3.12.0** (via Conda env named `cognarc`) |
+| **Conda Env** | `cognarc` at `/home/agentrogue/miniconda3/envs/cognarc` |
+| **Activate** | `source ~/miniconda3/etc/profile.d/conda.sh && conda activate cognarc` |
+| **Node.js** | v25.9.0 (system) |
+| **pnpm** | 10.33.4 |
+| **Docker** | 29.4.2 + Compose v5.1.3 |
+| **DE** | KDE Plasma 6.6.4 (Wayland) |
+
+### Hardware Constraints for Claude
+
+- **PyTorch:** Install with `--index-url https://download.pytorch.org/whl/cu124` (CUDA 12.4 build runs on 13.2 driver via backward compatibility)
+- **Phi-2 / Local LLM:** Max safe GGUF size is **Q4_K_M (~1.7 GB)**. Do NOT suggest Q8 or FP16 models.
+- **Batch sizes:** Keep GPU batch size ≤ 8 for inference tasks to avoid OOM with 4.7 GB free VRAM.
+- **llama-cpp-python:** Must be installed with `CMAKE_ARGS="-DGGML_CUDA=on"` to use GPU acceleration.
+- **FAISS:** Use `faiss-cpu` for development. GPU FAISS is unnecessary for BGE-small dedup.
+- **Docker memory:** Keep container limits to ≤ 3 GB RAM each to avoid swap thrashing.
+
+---
+
+## §00.5 — PROVISIONED INFRASTRUCTURE
+
+> **Status as of 2026-05-07 — Environment fully verified and developer-ready.**
+> All keys confirmed working via `scripts/verify_keys.py`.
+
+### External Services (All Provisioned)
+
+| Service | Status | Key Detail |
+|---|---|---|
+| **Supabase** | ✅ Service Role verified | Project ID: `qnfcjqockibnnjwyxlfq` · Region: ap-south-1 |
+| **MongoDB Atlas** | ✅ Ping OK | Cluster: `engunity.z6apovs.mongodb.net` · DB: `cognarc` |
+| **Groq API** | ✅ Models endpoint 200 | Primary model: `llama3-70b-8192` · Planner: `mixtral-8x7b-32768` |
+| **Upstash Redis** | ✅ PING OK | Instance: `driven-weasel-117499.upstash.io` |
+| **Vercel** | ✅ Token authenticated | Org: `1Hl737jENxD32xXrSr6xfnIy` · Project: `prj_RIJUySky2N7Z4M3uHR0eWNFm2ZHb` |
+| **Railway** | ✅ Project configured | Service: `cognarc-quests` · ID: `cmovixzzf04j6ad08a4mhgfwk` · Region: US |
+| **Langfuse** | ✅ Health endpoint 200 | Host: `cloud.langfuse.com` · Project keys in env |
+| **Sentry** | ✅ DSN set | Org: `cognarc` · Project: `javascript-nextjs` |
+
+### Environment Files
+
+| File | Purpose |
+|---|---|
+| `.env` | Root convenience file — loaded by direnv + local tools |
+| `config/environments/.env.development` | Canonical dev environment — source of truth |
+| `config/environments/.env.production` | Production (fill Railway/Vercel env vars instead) |
+
+**Load for shell session:**
+```bash
+source config/environments/.env.development
+# or — direnv handles it automatically via .envrc
+```
+
+**Verify all keys:**
+```bash
+python scripts/verify_keys.py
+```
+
+### Dependency Stack (All Installed in `cognarc` Conda Env)
+
+| Phase | Key Packages | Status |
+|---|---|---|
+| MVP (1–6) | FastAPI 0.115, PyTorch 2.6.0+cu124, Motor 3.7, Sentence-Transformers | ✅ Installed |
+| Phase 7 | Celery + Redis broker, Flower | ✅ Installed |
+| Phase 8 | evaluate, rouge-score, nltk, scikit-learn, pywebpush 2.3.0 | ✅ Installed |
+| Phase 9 | scipy, additional ML libs | ✅ Installed |
+| Phase 10 | LangGraph ≥0.4, LangChain-Groq ≥0.3, ChromaDB, Mem0 | ✅ Installed |
+| **llama-cpp-python** | Phi-2 GGUF local fallback (Phase 8) | ⏳ Requires `yay -S gcc13` first |
+
+**Re-install command:**
+```bash
+make install-all
+```
+
+**llama-cpp-python (when gcc13 available):**
+```bash
+yay -S gcc13    # AUR — gcc13 is NOT in official Arch repos (pacman -S gcc13 will fail)
+make install-all  # auto-detects g++-13 and compiles with CUDA
+```
+
+### VAPID Keys (Push Notifications — Phase 8)
+
+Already generated and stored in env files. Public key available in `VAPID_PUBLIC_KEY` env var.
+To regenerate: `npx web-push generate-vapid-keys` (use `npx`, not `npm install -g` — avoids permission errors).
+
+### Known Issues & Gotchas
+
+| Issue | Status | Fix |
+|---|---|---|
+| `groq==0.28.0` too old for langchain-groq 0.3.x | ✅ Fixed | Bumped to `groq>=0.30.0,<1.0.0` in `apps/api/requirements.txt` |
+| MongoDB/Postgres URI with `@` in password | ✅ Fixed | Password `@` escaped to `%40` in both env files |
+| `npm install -g web-push` permission error | ✅ Documented | Use `npx web-push generate-vapid-keys` instead |
+| `llama-cpp-python` CUDA build fails | ⏳ Pending | Needs `gcc13` from AUR (`yay -S gcc13`) |
+| Supabase Anon Key health check 401 | ⚠️ Investigate | Service role key works. Re-check anon key in Supabase dashboard → Settings → API |
+
+---
+
+
 
 COGNARC is an AI-powered gamified skill development SaaS platform. It replaces passive learning with an intelligent quest system that generates personalized daily missions, tracks XP and streaks, enforces skill-tree dependencies, and evolves into a multi-agent AI orchestration system.
 
@@ -233,25 +342,26 @@ features/<feature-name>/
 - API routes: only for BFF patterns (e.g., token exchange). Never proxy general business logic.
 - `middleware.ts` handles auth guard. Never replicate auth checks in individual page components.
 
-### Design System Rules
+### Design System Rules (Tactical IDE)
+
+**CRITICAL:** See `docs/website_ui/ui-ux-blueprint.md` for full specs. The color PURPLE is STRICTLY BANNED.
 
 | Token | Value | Usage |
 |---|---|---|
-| Primary Purple | `#6D28D9` | Headings, XP bar, active buttons |
-| Accent Gold | `#D97706` | Streak, boss highlights, badges |
-| Surface Dark | `#0F0F1A` | Main background (dark default) |
-| Surface Card | `#1A1A2E` | Quest cards, modals, sidebar |
-| Text Primary | `#F8FAFC` | Headings, important data |
-| Text Secondary | `#94A3B8` | Labels, descriptions |
-| Success | `#10B981` | Quest complete, streak extended |
-| Warning | `#F59E0B` | Streak warning, near expiry |
-| Danger | `#EF4444` | Streak lost, quest failed |
-| Font Headings | Space Grotesk | Level, XP, quest titles |
-| Font Body | Inter | Descriptions, labels |
+| Surfaces Obsidian | `#0B0C10` | Main background, absolute dark |
+| Surface Gunmetal | `#16181D` | Card backgrounds, bento boxes |
+| Accent Forge | `#FF6B00` | Streaks, active CTA, skill nodes |
+| Accent Volt | `#CCFF00` | Success, level-up, quest complete |
+| Text Bright | `#F8FAFC` | Headings, primary reading text |
+| Text Muted | `#8B949E` | Secondary text, inactive console |
+| Border Tactical | `#2D3748` | 1px sharp borders for Bento layout |
+| Font Headings | Space Grotesk | H1-H6, narrative titles |
+| Font Mono | JetBrains Mono| XP, telemetry, button labels, time |
+| Font Body | Inter | Standard body copy |
 
 - ALL design tokens live in `packages/design-tokens/`. Never hardcode hex values in components.
-- TailwindCSS with ShadCN UI. Custom classes use the token system via CSS variables.
-- Framer Motion for ALL animations. No CSS-only transitions for interactive elements.
+- TailwindCSS with ShadCN UI. Radius must be 0px. Shadows are banned.
+- Framer Motion for ALL animations. Use mechanical physics (e.g., stiffness: 300, damping: 30).
 
 ---
 
@@ -1058,6 +1168,11 @@ DISCOVER → PLAN → EDIT → VALIDATE → REPORT
 - [ ] All inputs validated via Pydantic/Zod
 - [ ] No secrets in diff
 - [ ] User code never directly executed (sandboxed only)
+
+**UI/UX Constraints (Tactical IDE):**
+- [ ] No trace of the color purple/magenta/violet in Tailwind classes.
+- [ ] No drop shadows or backdrop-blur. 
+- [ ] Heavy use of monospace fonts for data and 1px sharp borders.
 
 ---
 

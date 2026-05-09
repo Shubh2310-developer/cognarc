@@ -1,0 +1,35 @@
+# ══════════════════════════════════════════════════════════════
+# COGNARC — AI Services: Phase 10 — Agentic Orchestration
+# Python 3.12 | Conda env: cognarc
+# GATE: Do NOT install until Phases 6–9 are stable for 30 days
+#
+# Install with:
+#   pip install -r ai-services/requirements.phase10.txt
+#
+# NOTE: Range pins used (>=) so pip resolves the LangChain ecosystem
+# compatibility matrix at install time — these packages release together.
+# ══════════════════════════════════════════════════════════════
+
+# ── LangGraph State Machine ───────────────────────────────────
+langgraph>=0.4.0,<0.5.0
+
+# ── LangChain core (pinned to langgraph-compatible range) ─────
+langchain-core>=0.3.50,<0.4.0
+
+# ── LLM Integrations ─────────────────────────────────────────
+langchain-groq>=0.3.0,<0.4.0      # Groq adapter
+
+# ── Vector Store (agent memory + deduplication) ───────────────
+chromadb>=0.5.0,<2.0.0            # Lightweight local vector store
+
+# ── Agent Memory (persistent cross-session context) ───────────
+mem0ai>=0.1.90                     # Structured memory for agents
+
+# ── Agent Observability ───────────────────────────────────────
+# langfuse already in base requirements — traces all agent calls
+
+# ── Data validation for agent outputs ────────────────────────
+# Pydantic already in base requirements
+
+# ── Statistics for A/B reporting ─────────────────────────────
+scipy>=1.13.0                      # Pulled in from base — idempotent

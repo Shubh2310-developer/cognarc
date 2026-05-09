@@ -1,0 +1,375 @@
+/* =============================================================
+   COGNARC — Global Styles & Design Tokens
+   apps/web/app/globals.css
+   Tactical IDE / Industrial Blueprint Design System
+   ============================================================= */
+
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── CSS Custom Properties (Design Tokens) ─────────────────── */
+:root {
+  /* Surfaces */
+  --bg-void: #050505;
+  --surfaces-obsidian: #0B0C10;
+  --surface-gunmetal: #16181D;
+
+  /* Accents */
+  --accent-forge: #FF6B00;
+  --accent-volt: #CCFF00;
+
+  /* Borders */
+  --border-tactical: #2D3748;
+
+  /* Text */
+  --color-bright: #F8FAFC;
+  --color-muted: #8B949E;
+
+  /* Typography */
+  --font-heading: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", Consolas, monospace;
+
+  /* Animation */
+  --ease-snap: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-mechanical: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --duration-snap: 100ms;
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+
+  /* Spacing grid */
+  --grid-unit: 4px;
+}
+
+/* ── Base Reset & Tactical Defaults ─────────────────────────── */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  /* CRITICAL: No border-radius anywhere */
+  border-radius: 0 !important;
+  /* CRITICAL: No box-shadow anywhere */
+  box-shadow: none !important;
+}
+
+html {
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-void);
+  color: var(--color-bright);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+  /* Tactical grid background pattern */
+  background-image:
+    linear-gradient(var(--border-tactical) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-tactical) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: -1px -1px;
+}
+
+/* ── Scrollbar Styling — Tactical ────────────────────────────── */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-void);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-tactical);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted);
+}
+
+/* ── Typography Hierarchy ────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-bright);
+  line-height: 1.2;
+}
+
+h1 { font-size: 2.57rem; letter-spacing: -0.04em; }  /* 36px */
+h2 { font-size: 1.71rem; letter-spacing: -0.03em; }  /* 24px */
+h3 { font-size: 1.28rem; letter-spacing: -0.02em; }  /* 18px */
+h4 { font-size: 1.14rem; }  /* 16px */
+h5 { font-size: 1rem; }     /* 14px */
+h6 { font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; } /* 12px caps */
+
+p {
+  font-family: var(--font-body);
+  color: var(--color-bright);
+}
+
+code, pre, kbd, samp {
+  font-family: var(--font-mono);
+}
+
+/* ── Tactical Component Utilities ────────────────────────────── */
+@layer components {
+
+  /* Card / Bento Surface */
+  .tactical-card {
+    background-color: var(--surface-gunmetal);
+    border: 1px solid var(--border-tactical);
+    padding: 16px;
+    position: relative;
+  }
+
+  /* Active state — Forge Amber border */
+  .tactical-card--active {
+    border-color: var(--accent-forge);
+    border-width: 2px;
+  }
+
+  /* Success state — Volt Lime border */
+  .tactical-card--success {
+    border-color: var(--accent-volt);
+    border-width: 2px;
+  }
+
+  /* Status label — mono caps */
+  .tactical-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  /* Forge Amber accent label */
+  .tactical-label--forge {
+    color: var(--accent-forge);
+  }
+
+  /* Volt Lime accent label */
+  .tactical-label--volt {
+    color: var(--accent-volt);
+  }
+
+  /* XP / data readout — mono, large */
+  .tactical-readout {
+    font-family: var(--font-mono);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-bright);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  /* Divider — 1px tactical border line */
+  .tactical-divider {
+    height: 1px;
+    background-color: var(--border-tactical);
+    width: 100%;
+  }
+
+  /* Corner accent — industrial bracket mark */
+  .tactical-corner::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    width: 8px;
+    height: 8px;
+    border-top: 2px solid var(--accent-forge);
+    border-left: 2px solid var(--accent-forge);
+  }
+
+  .tactical-corner::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 8px;
+    height: 8px;
+    border-bottom: 2px solid var(--accent-forge);
+    border-right: 2px solid var(--accent-forge);
+  }
+
+  /* Status indicator dot — no glow */
+  .status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background-color: var(--color-muted);
+  }
+
+  .status-dot--online {
+    background-color: var(--accent-volt);
+  }
+
+  .status-dot--active {
+    background-color: var(--accent-forge);
+  }
+
+  /* Button — Tactical Ghost (Outline only) */
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: transparent;
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    border: 1px solid var(--border-tactical);
+    cursor: pointer;
+    transition: border-color var(--duration-snap) var(--ease-snap),
+                color var(--duration-snap) var(--ease-snap),
+                background-color var(--duration-snap) var(--ease-snap);
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--accent-forge);
+    color: var(--surfaces-obsidian);
+    background-color: var(--accent-forge);
+  }
+
+  /* Input — Tactical */
+  .tactical-input {
+    width: 100%;
+    background-color: var(--surfaces-obsidian);
+    border: 1px solid var(--border-tactical);
+    color: var(--color-bright);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    padding: 10px 12px;
+    outline: none;
+    transition: border-color var(--duration-snap) var(--ease-snap);
+  }
+
+  .tactical-input:focus {
+    border-color: var(--accent-forge);
+  }
+
+  .tactical-input::placeholder {
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+  }
+
+  /* Badge / Tag — mono */
+  .tactical-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border: 1px solid var(--border-tactical);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .tactical-badge--forge {
+    border-color: var(--accent-forge);
+    color: var(--accent-forge);
+    background-color: rgba(255, 107, 0, 0.08);
+  }
+
+  .tactical-badge--volt {
+    border-color: var(--accent-volt);
+    color: var(--accent-volt);
+    background-color: rgba(204, 255, 0, 0.08);
+  }
+
+  /* XP Progress Bar */
+  .xp-bar-track {
+    width: 100%;
+    height: 3px;
+    background-color: var(--border-tactical);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .xp-bar-fill {
+    height: 100%;
+    background-color: var(--accent-forge);
+    transition: width 0.4s var(--ease-snap);
+  }
+}
+
+/* ── Utility Layer ───────────────────────────────────────────── */
+@layer utilities {
+
+  /* Typewriter cursor */
+  .cursor-blink::after {
+    content: "|";
+    animation: blink 1s step-end infinite;
+    color: var(--accent-forge);
+    margin-left: 1px;
+  }
+
+  /* Forge text with subtle border highlight */
+  .text-forge { color: var(--accent-forge); }
+  .text-volt  { color: var(--accent-volt); }
+  .text-muted { color: var(--color-muted); }
+  .text-bright { color: var(--color-bright); }
+
+  /* Background utilities */
+  .bg-void { background-color: var(--bg-void); }
+  .bg-obsidian { background-color: var(--surfaces-obsidian); }
+  .bg-gunmetal { background-color: var(--surface-gunmetal); }
+
+  /* Border utilities */
+  .border-tactical { border-color: var(--border-tactical); }
+  .border-forge    { border-color: var(--accent-forge); }
+  .border-volt     { border-color: var(--accent-volt); }
+
+  /* Font utilities */
+  .font-heading { font-family: var(--font-heading); }
+  .font-data    { font-family: var(--font-mono); }
+
+  /* Grid line decoration */
+  .grid-lines {
+    background-image:
+      linear-gradient(var(--border-tactical) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border-tactical) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  /* Uppercase tracking — for labels */
+  .label-caps {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+  }
+
+  /* Selection color */
+  ::selection {
+    background-color: rgba(255, 107, 0, 0.3);
+    color: var(--color-bright);
+  }
+}
+
+/* ── Focus Ring — Tactical (no blue) ────────────────────────── */
+:focus-visible {
+  outline: 1px solid var(--accent-forge);
+  outline-offset: 1px;
+}
+
+/* ── Blink Cursor Animation ──────────────────────────────────── */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}

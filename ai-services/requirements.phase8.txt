@@ -1,0 +1,42 @@
+# ══════════════════════════════════════════════════════════════
+# COGNARC — AI Services: Phase 8 — Offline & Hybrid Evaluation
+# Python 3.12 | Conda env: cognarc
+# GATE: Do NOT install until Phase 7 is stable in production
+#
+# Install with:
+#   pip install -r ai-services/requirements.phase8.txt
+#
+# ⚠️  CRITICAL: llama-cpp-python (Phi-2 fallback) CANNOT be
+#    installed via pip on your system because CUDA 13.2's nvcc
+#    is incompatible with system GCC 16.1.1.
+#    Fix: sudo pacman -S gcc13
+#    Then: CMAKE_ARGS="-DGGML_CUDA=on" CUDAHOSTCXX=/usr/bin/g++-13 \
+#          pip install llama-cpp-python==0.3.8 --no-cache-dir
+# ══════════════════════════════════════════════════════════════
+
+# ── Code Evaluation (Hybrid Engine) ──────────────────────────
+# (sandbox_runner.py uses stdlib subprocess — no extra deps)
+
+# ── AI Quality Evaluation Metrics ────────────────────────────
+evaluate==0.4.3
+rouge-score==0.1.2
+
+# ── NLP utilities ────────────────────────────────────────────
+nltk==3.9.1
+
+# ── Datasets (test case generation & eval sets) ───────────────
+datasets==3.6.0
+
+# ── Behavioral Engine signals ─────────────────────────────────
+scikit-learn==1.6.1
+
+# ── Model download (Phi-2 GGUF) ──────────────────────────────
+huggingface-hub==0.30.2
+
+# ── Phi-2 Local LLM — INSTALL MANUALLY (see header note above)
+# CMAKE_ARGS="-DGGML_CUDA=on" CUDAHOSTCXX=/usr/bin/g++-13 \
+#   pip install llama-cpp-python==0.3.8 --no-cache-dir
+
+# ── Push Notifications (VAPID) ────────────────────────────────
+pywebpush==2.3.0
+cryptography==44.0.3
